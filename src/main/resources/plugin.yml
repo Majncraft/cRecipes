@@ -1,0 +1,7 @@
+name: cRecipes
+description: Improved custom recipes for Bukkit servers
+version: ${pom.version}-b${BUILD_NUMBER}
+main: net.catharos.recipes.cRecipes
+
+author: SpaceEmotion
+website: http://www.catharos.de
