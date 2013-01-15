@@ -32,10 +32,11 @@ public class cRecipes extends JavaPlugin implements Listener {
 		if (getConfig().getBoolean( "check-updates", true )) new Updater( this, true );
 
 		// Run async, to reduce lagg
-		getServer().getScheduler().runTask( this, new Runnable() {
+		getServer().getScheduler().runTaskAsynchronously( this, new Runnable() {
 			public void run() {
 				try {
-					new Metrics( instance );
+					Metrics metrics = new Metrics( instance );
+					metrics.start();
 				} catch (IOException e) {
 					getLogger().info( "cRecipes failed plugin metrics" );
 				}

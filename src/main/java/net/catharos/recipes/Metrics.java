@@ -1,7 +1,5 @@
-package net.catharos.recipes;
-
 /*
- * Copyright 2011 Tyler Blair. All rights reserved.
+ * Copyright 2011-2013 Tyler Blair. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -27,6 +25,7 @@ package net.catharos.recipes;
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
+package net.catharos.recipes;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -51,6 +50,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  * <p>
@@ -62,7 +62,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
  * </p>
  * <code>
  * Graph createGraph(String name); <br/>
- * void addCustomData(Metrics.Plotter plotter); <br/>
+ * void addCustomData(BukkitMetrics.Plotter plotter); <br/>
  * void start(); <br/>
  * </code>
  */
@@ -71,69 +71,61 @@ public class Metrics {
 	/**
 	 * The current revision number
 	 */
-	private final static int REVISION = 5;
-
+	private final static int REVISION = 6;
 	/**
 	 * The base url of the metrics domain
 	 */
 	private static final String BASE_URL = "http://mcstats.org";
-
 	/**
 	 * The url used to report a server's status
 	 */
 	private static final String REPORT_URL = "/report/%s";
-
 	/**
 	 * The separator to use for custom data. This MUST NOT change unless you are
 	 * hosting your own version of metrics and want to change it.
 	 */
 	private static final String CUSTOM_DATA_SEPARATOR = "~~";
-
 	/**
 	 * Interval of time to ping (in minutes)
 	 */
 	private static final int PING_INTERVAL = 10;
-
 	/**
 	 * The plugin this metrics submits for
 	 */
 	private final Plugin plugin;
-
 	/**
 	 * All of the custom graphs to submit to metrics
 	 */
 	private final Set<Graph> graphs = Collections.synchronizedSet( new HashSet<Graph>() );
-
 	/**
 	 * The default graph, used for addCustomData when you don't want a specific
 	 * graph
 	 */
 	private final Graph defaultGraph = new Graph( "Default" );
-
 	/**
 	 * The plugin configuration file
 	 */
 	private final YamlConfiguration configuration;
-
 	/**
 	 * The plugin configuration file
 	 */
 	private final File configurationFile;
-
 	/**
 	 * Unique server id
 	 */
 	private final String guid;
-
+	/**
+	 * Debug mode
+	 */
+	private final boolean debug;
 	/**
 	 * Lock for synchronization
 	 */
 	private final Object optOutLock = new Object();
-
 	/**
-	 * Id of the scheduled task
+	 * The scheduled task
 	 */
-	private volatile int taskId = -1;
+	private volatile BukkitTask task = null;
 
 	public Metrics( final Plugin plugin ) throws IOException {
 		if (plugin == null) { throw new IllegalArgumentException( "Plugin cannot be null" ); }
@@ -147,6 +139,7 @@ public class Metrics {
 		// add some defaults
 		configuration.addDefault( "opt-out", false );
 		configuration.addDefault( "guid", UUID.randomUUID().toString() );
+		configuration.addDefault( "debug", false );
 
 		// Do we need to create the file?
 		if (configuration.get( "guid", null ) == null) {
@@ -156,6 +149,7 @@ public class Metrics {
 
 		// Load the guid then
 		guid = configuration.getString( "guid" );
+		debug = configuration.getBoolean( "debug", false );
 	}
 
 	/**
@@ -181,8 +175,8 @@ public class Metrics {
 	}
 
 	/**
-	 * Add a Graph object to Metrics that represents data for the plugin that
-	 * should be sent to the backend
+	 * Add a Graph object to BukkitMetrics that represents data for the plugin
+	 * that should be sent to the backend
 	 * 
 	 * @param graph The name of the graph
 	 */
@@ -221,10 +215,10 @@ public class Metrics {
 			if (isOptOut()) { return false; }
 
 			// Is metrics already running?
-			if (taskId >= 0) { return true; }
+			if (task != null) { return true; }
 
 			// Begin hitting the server with glorious data
-			taskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask( plugin, new Runnable() {
+			task = plugin.getServer().getScheduler().runTaskTimerAsynchronously( plugin, new Runnable() {
 
 				private boolean firstPost = true;
 
@@ -235,9 +229,9 @@ public class Metrics {
 						synchronized (optOutLock) {
 							// Disable Task, if it is running and the server
 							// owner decided to opt-out
-							if (isOptOut() && taskId > 0) {
-								plugin.getServer().getScheduler().cancelTask( taskId );
-								taskId = -1;
+							if (isOptOut() && task != null) {
+								task.cancel();
+								task = null;
 								// Tell all plotters to stop gathering
 								// information.
 								for (Graph graph : graphs) {
@@ -257,7 +251,9 @@ public class Metrics {
 						// Each post thereafter will be a ping
 						firstPost = false;
 					} catch (IOException e) {
-						Bukkit.getLogger().log( Level.INFO, "[Metrics] " + e.getMessage() );
+						if (debug) {
+							Bukkit.getLogger().log( Level.INFO, "[Metrics] " + e.getMessage() );
+						}
 					}
 				}
 			}, 0, PING_INTERVAL * 1200 );
@@ -277,10 +273,14 @@ public class Metrics {
 				// Reload the metrics file
 				configuration.load( getConfigFile() );
 			} catch (IOException ex) {
-				Bukkit.getLogger().log( Level.INFO, "[Metrics] " + ex.getMessage() );
+				if (debug) {
+					Bukkit.getLogger().log( Level.INFO, "[Metrics] " + ex.getMessage() );
+				}
 				return true;
 			} catch (InvalidConfigurationException ex) {
-				Bukkit.getLogger().log( Level.INFO, "[Metrics] " + ex.getMessage() );
+				if (debug) {
+					Bukkit.getLogger().log( Level.INFO, "[Metrics] " + ex.getMessage() );
+				}
 				return true;
 			}
 			return configuration.getBoolean( "opt-out", false );
@@ -291,7 +291,7 @@ public class Metrics {
 	 * Enables metrics for the server by setting "opt-out" to false in the
 	 * config file and starting the metrics task.
 	 * 
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 */
 	public void enable() throws IOException {
 		// This has to be synchronized or it can collide with the check in the
@@ -305,7 +305,7 @@ public class Metrics {
 			}
 
 			// Enable Task, if it is not running
-			if (taskId < 0) {
+			if (task == null) {
 				start();
 			}
 		}
@@ -315,7 +315,7 @@ public class Metrics {
 	 * Disables metrics for the server by setting "opt-out" to true in the
 	 * config file and canceling the metrics task.
 	 * 
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 */
 	public void disable() throws IOException {
 		// This has to be synchronized or it can collide with the check in the
@@ -329,9 +329,9 @@ public class Metrics {
 			}
 
 			// Disable Task, if it is running
-			if (taskId > 0) {
-				this.plugin.getServer().getScheduler().cancelTask( taskId );
-				taskId = -1;
+			if (task != null) {
+				task.cancel();
+				task = null;
 			}
 		}
 	}
@@ -359,17 +359,49 @@ public class Metrics {
 	 * Generic method that posts a plugin to the metrics website
 	 */
 	private void postPlugin( final boolean isPing ) throws IOException {
-		// The plugin's description file containg all of the plugin data such as
-		// name, version, author, etc
-		final PluginDescriptionFile description = plugin.getDescription();
+		// Server software specific section
+		PluginDescriptionFile description = plugin.getDescription();
+		String pluginName = description.getName();
+		boolean onlineMode = Bukkit.getServer().getOnlineMode(); // TRUE if
+																	// online
+																	// mode is
+																	// enabled
+		String pluginVersion = description.getVersion();
+		String serverVersion = Bukkit.getVersion();
+		int playersOnline = Bukkit.getServer().getOnlinePlayers().length;
+
+		// END server software specific section -- all code below does not use
+		// any code outside of this class / Java
 
 		// Construct the post data
 		final StringBuilder data = new StringBuilder();
+
+		// The plugin's description file containg all of the plugin data such as
+		// name, version, author, etc
 		data.append( encode( "guid" ) ).append( '=' ).append( encode( guid ) );
-		encodeDataPair( data, "version", description.getVersion() );
-		encodeDataPair( data, "server", Bukkit.getVersion() );
-		encodeDataPair( data, "players", Integer.toString( Bukkit.getServer().getOnlinePlayers().length ) );
+		encodeDataPair( data, "version", pluginVersion );
+		encodeDataPair( data, "server", serverVersion );
+		encodeDataPair( data, "players", Integer.toString( playersOnline ) );
 		encodeDataPair( data, "revision", String.valueOf( REVISION ) );
+
+		// New data as of R6
+		String osname = System.getProperty( "os.name" );
+		String osarch = System.getProperty( "os.arch" );
+		String osversion = System.getProperty( "os.version" );
+		String java_version = System.getProperty( "java.version" );
+		int coreCount = Runtime.getRuntime().availableProcessors();
+
+		// normalize os arch .. amd64 -> x86_64
+		if (osarch.equals( "amd64" )) {
+			osarch = "x86_64";
+		}
+
+		encodeDataPair( data, "osname", osname );
+		encodeDataPair( data, "osarch", osarch );
+		encodeDataPair( data, "osversion", osversion );
+		encodeDataPair( data, "cores", Integer.toString( coreCount ) );
+		encodeDataPair( data, "online-mode", Boolean.toString( onlineMode ) );
+		encodeDataPair( data, "java_version", java_version );
 
 		// If we're pinging, append it
 		if (isPing) {
@@ -406,7 +438,7 @@ public class Metrics {
 		}
 
 		// Create the url
-		URL url = new URL( BASE_URL + String.format( REPORT_URL, encode( plugin.getDescription().getName() ) ) );
+		URL url = new URL( BASE_URL + String.format( REPORT_URL, encode( pluginName ) ) );
 
 		// Connect to the website
 		URLConnection connection;
@@ -508,7 +540,6 @@ public class Metrics {
 		 * comply to the above when submitted, it is rejected
 		 */
 		private final String name;
-
 		/**
 		 * The set of plotters that are contained within this graph
 		 */
@@ -548,7 +579,7 @@ public class Metrics {
 		/**
 		 * Gets an <b>unmodifiable</b> set of the plotter objects in the graph
 		 * 
-		 * @return an unmodifiable {@link Set} of the plotter objects
+		 * @return an unmodifiable {@link java.util.Set} of the plotter objects
 		 */
 		public Set<Plotter> getPlotters() {
 			return Collections.unmodifiableSet( plotters );
@@ -568,12 +599,11 @@ public class Metrics {
 		}
 
 		/**
-		 * Called when the server owner decides to opt-out of Metrics while the
-		 * server is running.
+		 * Called when the server owner decides to opt-out of BukkitMetrics
+		 * while the server is running.
 		 */
 		protected void onOptOut() {
 		}
-
 	}
 
 	/**
@@ -641,7 +671,5 @@ public class Metrics {
 			final Plotter plotter = (Plotter) object;
 			return plotter.name.equals( name ) && plotter.getValue() == getValue();
 		}
-
 	}
-
 }
