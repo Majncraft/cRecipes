@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class RecipeLoader {
 	protected cRecipes plugin;
@@ -95,6 +96,16 @@ public class RecipeLoader {
 		}
 
 		cr.setDrops( drops );
+
+		// Item lores
+		if (config.isList( "details" )) {
+			List<String> details = config.getStringList( "details" );
+
+			ItemMeta meta = cr.getItem().getItemMeta();
+			meta.setLore( details );
+			cr.getItem().setItemMeta( meta );
+		}
+
 		return true;
 	}
 
