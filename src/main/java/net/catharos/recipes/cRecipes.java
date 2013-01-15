@@ -14,11 +14,15 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.spaceemotion.updater.Updater;
+
 public class cRecipes extends JavaPlugin implements Listener {
 	protected Map<Integer, Map<Byte, CustomRecipe>> recipes;
 	protected RecipeLoader loader;
 
 	public void onEnable() {
+		new Updater( this, true );
+
 		getDataFolder().mkdirs();
 
 		recipes = new HashMap<Integer, Map<Byte, CustomRecipe>>();
