@@ -54,8 +54,6 @@ public class cRecipes extends JavaPlugin implements Listener {
 	}
 
 	public CustomRecipe getRecipe( int mat, short data ) {
-		System.out.println( "[GET] " + mat + ":" + data );
-
 		Map<Byte, CustomRecipe> stored = getRecipes().get( mat );
 
 		if (stored != null)
@@ -72,8 +70,6 @@ public class cRecipes extends JavaPlugin implements Listener {
 		CustomRecipe cr = this.getRecipe( block.getTypeId(), block.getData() );
 
 		if (cr != null) {
-			System.out.println( true );
-
 			for (ItemStack drop : cr.getDrops())
 				block.getWorld().dropItemNaturally( block.getLocation(), drop );
 
