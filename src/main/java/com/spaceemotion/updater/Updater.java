@@ -33,7 +33,10 @@ public class Updater {
 		this.do_update = doUpdate;
 
 		this.plugin_name = plugin.getName();
-		this.current_version_str = plugin.getDescription().getVersion();
+
+		String[] v = plugin.getDescription().getVersion().split( "-" );
+		this.current_version_str = v[0];
+
 		this.current_version = Double.parseDouble( current_version_str.replaceFirst( "\\.", "" ).replace( "/", "" ) );
 
 		this.update_url = "http://dev.bukkit.org/server-mods/" + plugin_name + "/files.rss";
