@@ -28,9 +28,8 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 		getConfig().options().copyDefaults( true );
 		this.saveConfig();
-		getConfig().getBoolean( "check-updates", true );
 
-		new Updater( this, true );
+		if (getConfig().getBoolean( "check-updates", true )) new Updater( this, true );
 
 		// Run async, to reduce lagg
 		getServer().getScheduler().runTask( this, new Runnable() {
