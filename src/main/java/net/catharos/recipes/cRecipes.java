@@ -2,7 +2,6 @@ package net.catharos.recipes;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import net.catharos.recipes.crafting.CustomRecipe;
 
@@ -51,11 +50,10 @@ public class cRecipes extends JavaPlugin implements Listener {
 		if (event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
 		Block block = event.getBlock();
+		Map<Byte, CustomRecipe> stored = getRecipes().get( block.getTypeId() );
 
-		for (Entry<Integer, Map<Byte, CustomRecipe>> e : getRecipes().entrySet()) {
-			if (e.getKey() != block.getTypeId()) continue;
-
-			CustomRecipe cr = e.getValue().get( block.getData() );
+		if (stored != null) {
+			CustomRecipe cr = stored.get( block.getData() );
 
 			if (cr != null) {
 				for (ItemStack drop : cr.getDrops())
