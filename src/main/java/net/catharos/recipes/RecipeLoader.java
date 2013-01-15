@@ -137,7 +137,7 @@ public class RecipeLoader {
 			for (String ingredient : sl) {
 				String[] i = ingredient.split( ":" );
 
-				if (i.length < 1) throw new Exception( "Wrong recipe format: " + ingredient + " (should be like a:b:c)" );
+				if (i.length < 1) throw new Exception( "Wrong recipe format: " + ingredient + " (should be like a:b[:c])" );
 
 				Material mat = getMaterial( i[1] );
 				if (mat == null) return false;
