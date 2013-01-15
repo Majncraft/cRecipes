@@ -46,6 +46,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 		}
 
 		map.put( data, recipe );
+		getServer().addRecipe( recipe.getRecipe() );
 	}
 
 	@EventHandler
