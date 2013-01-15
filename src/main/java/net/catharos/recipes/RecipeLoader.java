@@ -30,22 +30,34 @@ public class RecipeLoader {
 		// Shaped recipes
 		ConfigurationSection shaped = recipes.getConfigurationSection( "shaped" );
 		for (String key : shaped.getKeys( false ))
-			if (shaped.isConfigurationSection( key )) this.loadRecipe( key, shaped.getConfigurationSection( key ), true );
+			if (shaped.isConfigurationSection( key )) {
+				if (this.loadRecipe( key, shaped.getConfigurationSection( key ), true ))
+					plugin.getLogger().info( "Successfully added shaped recipe: " + key );
+				else
+					plugin.getLogger().info( "Error adding shaped recipe: " + key );
+			}
 
 		// Shapeless recipes
 		ConfigurationSection shapeless = recipes.getConfigurationSection( "shapeless" );
 		for (String key : shapeless.getKeys( false ))
-			if (shapeless.isConfigurationSection( key )) this.loadRecipe( key, shapeless.getConfigurationSection( key ), false );
+			if (shapeless.isConfigurationSection( key )) {
+				if (this.loadRecipe( key, shapeless.getConfigurationSection( key ), false ))
+					plugin.getLogger().info( "Successfully added shapeless recipe: " + key );
+				else
+					plugin.getLogger().info( "Error adding shapeless recipe: " + key );
+			}
 
 	}
 
 	public boolean loadRecipe( String name, ConfigurationSection config, boolean shaped ) {
 		// Output material
 		String[] out = config.getString( "block" ).split( ":" );
+		byte data = 0;
 
-		if (out.length != 2) return false;
-		Material mat = Material.getMaterial( config.getString( out[0] ) );
-		byte data = Byte.parseByte( out[1] );
+		if (out.length > 1) data = Byte.parseByte( out[1] );
+
+		Material mat = getMaterial( out[0] );
+		if (mat == null) return false;
 
 		// Crafting amount
 		int amount = config.getInt( "amount", 1 );
@@ -53,12 +65,17 @@ public class RecipeLoader {
 		// Add the recipe
 		CustomRecipe cr;
 
-		if (shaped) {
-			cr = new CustomShapedRecipe( name, mat, amount, data );
-			if (!addShaped( (CustomShapedRecipe) cr, config )) return false;
-		} else {
-			cr = new CustomShapelessRecipe( name, mat, amount, data );
-			if (!addShapeless( (CustomShapelessRecipe) cr, config )) return false;
+		try {
+			if (shaped) {
+				cr = new CustomShapedRecipe( name, mat, amount, data );
+				if (!addShaped( (CustomShapedRecipe) cr, config )) return false;
+			} else {
+				cr = new CustomShapelessRecipe( name, mat, amount, data );
+				if (!addShapeless( (CustomShapelessRecipe) cr, config )) return false;
+			}
+		} catch (Exception e) {
+			plugin.getLogger().info( "Error loading recipe: " + e.getMessage() );
+			return false;
 		}
 
 		// Item drops
@@ -81,23 +98,28 @@ public class RecipeLoader {
 		return true;
 	}
 
-	private boolean addShaped( CustomShapedRecipe cr, ConfigurationSection c ) {
+	private boolean addShaped( CustomShapedRecipe cr, ConfigurationSection c ) throws Exception {
 		ShapedRecipe recipe = cr.getRecipe();
 		ConfigurationSection rc = c.getConfigurationSection( "recipe" );
 
 		if (rc != null) {
+			if (!rc.isList( "shape" )) throw new Exception( "Shape configuration is missing!" );
+
+			List<String> shapeList = rc.getStringList( "shape" );
+			recipe.shape( shapeList.toArray( new String[shapeList.size()] ) );
+
 			ConfigurationSection ingredients = rc.getConfigurationSection( "ingredients" );
 			for (String key : ingredients.getKeys( false )) {
 				String[] i = ingredients.getString( key ).split( ":" );
 
-				if (i.length > 1)
-					recipe.setIngredient( key.charAt( 0 ), Material.getMaterial( Integer.parseInt( i[0] ) ), Integer.parseInt( i[1] ) );
-				else
-					recipe.setIngredient( key.charAt( 0 ), Material.getMaterial( Integer.parseInt( i[0] ) ) );
-			}
+				Material mat = getMaterial( i[0] );
+				if (mat == null) return false;
 
-			List<String> shapeList = rc.getStringList( "shape" );
-			recipe.shape( shapeList.toArray( new String[shapeList.size()] ) );
+				if (i.length > 1)
+					recipe.setIngredient( key.charAt( 0 ), mat, Integer.parseInt( i[1] ) );
+				else
+					recipe.setIngredient( key.charAt( 0 ), mat );
+			}
 
 			plugin.addRecipe( cr.getItem().getTypeId(), cr.getItem().getData().getData(), cr );
 
@@ -107,18 +129,23 @@ public class RecipeLoader {
 		return false;
 	}
 
-	private boolean addShapeless( CustomShapelessRecipe cr, ConfigurationSection c ) {
+	private boolean addShapeless( CustomShapelessRecipe cr, ConfigurationSection c ) throws Exception {
 		ShapelessRecipe recipe = cr.getRecipe();
-		ConfigurationSection rc = c.getConfigurationSection( "recipe" );
+		List<String> sl = c.getStringList( "recipe" );
 
-		if (rc != null) {
-			for (String key : rc.getKeys( false )) {
-				String[] i = rc.getString( key ).split( ":" );
+		if (sl != null && !sl.isEmpty()) {
+			for (String ingredient : sl) {
+				String[] i = ingredient.split( ":" );
 
-				if (i.length > 1)
-					recipe.addIngredient( key.charAt( 0 ), Material.getMaterial( Integer.parseInt( i[0] ) ), Integer.parseInt( i[1] ) );
+				if (i.length < 1) throw new Exception( "Wrong recipe format: " + ingredient + " (should be like a:b:c)" );
+
+				Material mat = getMaterial( i[1] );
+				if (mat == null) return false;
+
+				if (i.length > 2)
+					recipe.addIngredient( Integer.parseInt( i[0] ), mat, Integer.parseInt( i[2] ) );
 				else
-					recipe.addIngredient( key.charAt( 0 ), Material.getMaterial( Integer.parseInt( i[0] ) ) );
+					recipe.addIngredient( Integer.parseInt( i[0] ), mat );
 			}
 
 			plugin.addRecipe( cr.getItem().getTypeId(), cr.getItem().getData().getData(), cr );
@@ -127,5 +154,16 @@ public class RecipeLoader {
 		}
 
 		return false;
+	}
+
+	private Material getMaterial( String key ) {
+		Material mat = Material.getMaterial( key );
+
+		if (mat == null) try {
+			mat = Material.getMaterial( Integer.parseInt( key ) );
+		} catch (Exception e) {
+		}
+
+		return mat;
 	}
 }

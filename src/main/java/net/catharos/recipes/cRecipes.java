@@ -16,11 +16,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class cRecipes extends JavaPlugin implements Listener {
 	protected Map<Integer, Map<Byte, CustomRecipe>> recipes;
+	protected RecipeLoader loader;
 
 	public void onEnable() {
 		getDataFolder().mkdirs();
 
 		recipes = new HashMap<Integer, Map<Byte, CustomRecipe>>();
+
+		loader = new RecipeLoader( this );
 
 		getServer().getPluginManager().registerEvents( this, this );
 	}
