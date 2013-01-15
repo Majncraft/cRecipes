@@ -49,23 +49,32 @@ public class cRecipes extends JavaPlugin implements Listener {
 		getServer().addRecipe( recipe.getRecipe() );
 	}
 
+	public CustomRecipe getRecipe( int mat, short data ) {
+		System.out.println( "[GET] " + mat + ":" + data );
+
+		Map<Byte, CustomRecipe> stored = getRecipes().get( mat );
+
+		if (stored != null)
+			return stored.get( (byte) data );
+		else
+			return null;
+	}
+
 	@EventHandler
 	public void e( BlockBreakEvent event ) {
 		if (event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
 		Block block = event.getBlock();
-		Map<Byte, CustomRecipe> stored = getRecipes().get( block.getTypeId() );
+		CustomRecipe cr = this.getRecipe( block.getTypeId(), block.getData() );
 
-		if (stored != null) {
-			CustomRecipe cr = stored.get( block.getData() );
+		if (cr != null) {
+			System.out.println( true );
 
-			if (cr != null) {
-				for (ItemStack drop : cr.getDrops())
-					block.getWorld().dropItemNaturally( block.getLocation(), drop );
+			for (ItemStack drop : cr.getDrops())
+				block.getWorld().dropItemNaturally( block.getLocation(), drop );
 
-				block.setType( Material.AIR );
-				event.setCancelled( true );
-			}
+			block.setType( Material.AIR );
+			event.setCancelled( true );
 		}
 	}
 }

@@ -86,14 +86,28 @@ public class RecipeLoader {
 			for (String s : config.getStringList( "drops" )) {
 				String[] l = s.split( ":" );
 
-				if (l.length == 2)
-					drops.add( new ItemStack( Material.getMaterial( l[0] ), 1, Short.parseShort( l[1] ) ) );
-				else
-					drops.add( new ItemStack( Material.getMaterial( l[0] ), 1 ) );
+				Material mat2 = getMaterial( l[0] );
+
+				if (mat2 == null) return false;
+
+				if (l.length == 2) {
+					CustomRecipe get = plugin.getRecipe( mat2.getId(), Short.parseShort( l[1] ) );
+
+					if (get != null)
+						drops.add( get.getItem() );
+					else
+						drops.add( new ItemStack( mat2, 1, Short.parseShort( l[1] ) ) );
+				} else {
+					CustomRecipe get = plugin.getRecipe( mat2.getId(), (short) 0 );
+
+					if (get != null)
+						drops.add( get.getItem() );
+					else
+						drops.add( new ItemStack( mat2, 1 ) );
+				}
 			}
-		} else {
+		} else
 			drops.add( cr.getItem() );
-		}
 
 		cr.setDrops( drops );
 
