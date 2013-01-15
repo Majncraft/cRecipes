@@ -30,7 +30,7 @@ public class RecipeLoader {
 
 		// Shaped recipes
 		ConfigurationSection shaped = recipes.getConfigurationSection( "shaped" );
-		for (String key : shaped.getKeys( false ))
+		if (shaped != null) for (String key : shaped.getKeys( false ))
 			if (shaped.isConfigurationSection( key )) {
 				if (this.loadRecipe( key, shaped.getConfigurationSection( key ), true ))
 					plugin.getLogger().info( "Successfully added shaped recipe: " + key );
@@ -40,7 +40,8 @@ public class RecipeLoader {
 
 		// Shapeless recipes
 		ConfigurationSection shapeless = recipes.getConfigurationSection( "shapeless" );
-		for (String key : shapeless.getKeys( false ))
+
+		if (shapeless != null) for (String key : shapeless.getKeys( false ))
 			if (shapeless.isConfigurationSection( key )) {
 				if (this.loadRecipe( key, shapeless.getConfigurationSection( key ), false ))
 					plugin.getLogger().info( "Successfully added shapeless recipe: " + key );
