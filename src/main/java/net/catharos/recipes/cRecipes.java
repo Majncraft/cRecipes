@@ -18,22 +18,30 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.spaceemotion.updater.Updater;
 
 public class cRecipes extends JavaPlugin implements Listener {
+	private cRecipes instance;
+
 	protected Map<Integer, Map<Byte, CustomRecipe>> recipes;
 	protected RecipeLoader loader;
 
 	public void onEnable() {
+		instance = this;
+
 		new Updater( this, true );
 
-		try {
-			new Metrics( this );
-		} catch (IOException e) {
-			getLogger().info( "cRecipes failed plugin metrics" );
-		}
+		// Run async, to reduce lagg
+		getServer().getScheduler().runTask( this, new Runnable() {
+			public void run() {
+				try {
+					new Metrics( instance );
+				} catch (IOException e) {
+					getLogger().info( "cRecipes failed plugin metrics" );
+				}
+			}
+		} );
 
 		getDataFolder().mkdirs();
 
 		recipes = new HashMap<Integer, Map<Byte, CustomRecipe>>();
-
 		loader = new RecipeLoader( this );
 
 		getServer().getPluginManager().registerEvents( this, this );
