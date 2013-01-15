@@ -1,5 +1,6 @@
 package net.catharos.recipes;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,12 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 	public void onEnable() {
 		new Updater( this, true );
+
+		try {
+			new Metrics( this );
+		} catch (IOException e) {
+			getLogger().info( "cRecipes failed plugin metrics" );
+		}
 
 		getDataFolder().mkdirs();
 
