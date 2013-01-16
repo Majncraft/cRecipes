@@ -14,6 +14,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -30,33 +31,67 @@ public class RecipeLoader {
 		FileConfiguration recipes = YamlConfiguration.loadConfiguration( recFile );
 		boolean debug = plugin.getConfig().getBoolean( "debug-output", true );
 
-		// Shaped recipes
-		ConfigurationSection shaped = recipes.getConfigurationSection( "shaped" );
-		if (shaped != null) for (String key : shaped.getKeys( false ))
-			if (shaped.isConfigurationSection( key )) {
-				boolean success = this.loadRecipe( key, shaped.getConfigurationSection( key ), true );
-				if (!debug) continue;
+		// 'Remove' vanilla recipes
+		if (recipes.isList( "remove-vanilla" )) {
+			List<String> removes = recipes.getStringList( "remove-vanilla" );
 
-				if (success)
-					plugin.getLogger().info( "Successfully added shaped recipe: " + key );
-				else
-					plugin.getLogger().info( "Error adding shaped recipe: " + key );
+			while (plugin.getServer().recipeIterator().hasNext()) {
+				Recipe recipe = plugin.getServer().recipeIterator().next();
+				ItemStack result = recipe.getResult();
+
+				for (String r : removes) {
+					System.out.println( r + " cmp " + result.getType().name() );
+
+					String[] i = r.split( ":" );
+					if (i.length < 1) continue;
+
+					Material mat = getMaterial( i[0] );
+
+					if (result.getTypeId() != mat.getId()) continue;
+					byte id = 0;
+
+					if (i.length > 1) id = Byte.parseByte( i[1] );
+
+					if (result.getData().getData() == id) {
+						plugin.getServer().recipeIterator().remove();
+						if (debug) plugin.getLogger().info( "Removed vanilla recipe for " + mat.name() );
+
+						break;
+					}
+				}
 			}
+		}
+
+		// Shaped recipes
+		if (recipes.isConfigurationSection( "shaped" )) {
+			ConfigurationSection shaped = recipes.getConfigurationSection( "shaped" );
+			for (String key : shaped.getKeys( false ))
+				if (shaped.isConfigurationSection( key )) {
+					boolean success = this.loadRecipe( key, shaped.getConfigurationSection( key ), true );
+					if (!debug) continue;
+
+					if (success)
+						plugin.getLogger().info( "Successfully added shaped recipe: " + key );
+					else
+						plugin.getLogger().info( "Error adding shaped recipe: " + key );
+				}
+		}
 
 		// Shapeless recipes
-		ConfigurationSection shapeless = recipes.getConfigurationSection( "shapeless" );
+		if (recipes.isConfigurationSection( "shapeless" )) {
+			ConfigurationSection shapeless = recipes.getConfigurationSection( "shapeless" );
 
-		if (shapeless != null) for (String key : shapeless.getKeys( false ))
-			if (shapeless.isConfigurationSection( key )) {
-				boolean success = this.loadRecipe( key, shapeless.getConfigurationSection( key ), false );
-				if (!debug) continue;
+			for (String key : shapeless.getKeys( false ))
+				if (shapeless.isConfigurationSection( key )) {
+					boolean success = this.loadRecipe( key, shapeless.getConfigurationSection( key ), false );
+					if (!debug) continue;
 
-				if (success)
-					plugin.getLogger().info( "Successfully added shapeless recipe: " + key );
-				else
-					plugin.getLogger().info( "Error adding shapeless recipe: " + key );
-			}
-
+					if (success)
+						plugin.getLogger().info( "Successfully added shapeless recipe: " + key );
+					else
+						plugin.getLogger().info( "Error adding shapeless recipe: " + key );
+				}
+		}
 	}
 
 	public boolean loadRecipe( String name, ConfigurationSection config, boolean shaped ) {

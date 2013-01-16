@@ -56,6 +56,10 @@ public class cRecipes extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents( this, this );
 	}
 
+	public void onDisable() {
+		getServer().resetRecipes();
+	}
+
 	/**
 	 * Returns a list of stored {@link CustomRecipe}s
 	 * 
