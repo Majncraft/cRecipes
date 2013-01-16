@@ -2,6 +2,7 @@ package net.catharos.recipes;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.catharos.recipes.crafting.CustomRecipe;
@@ -35,28 +36,30 @@ public class RecipeLoader {
 		if (recipes.isList( "remove-vanilla" )) {
 			List<String> removes = recipes.getStringList( "remove-vanilla" );
 
-			while (plugin.getServer().recipeIterator().hasNext()) {
-				Recipe recipe = plugin.getServer().recipeIterator().next();
-				ItemStack result = recipe.getResult();
+			if (!removes.isEmpty()) {
+				Iterator<Recipe> ri = plugin.getServer().recipeIterator();
 
-				for (String r : removes) {
-					System.out.println( r + " cmp " + result.getType().name() );
+				while (ri.hasNext()) {
+					Recipe recipe = ri.next();
+					ItemStack result = recipe.getResult();
 
-					String[] i = r.split( ":" );
-					if (i.length < 1) continue;
+					for (String r : removes) {
+						String[] i = r.split( ":" );
+						if (i.length < 1) continue;
 
-					Material mat = getMaterial( i[0] );
+						Material mat = getMaterial( i[0] );
 
-					if (result.getTypeId() != mat.getId()) continue;
-					byte id = 0;
+						if (result.getTypeId() != mat.getId()) continue;
+						byte id = 0;
 
-					if (i.length > 1) id = Byte.parseByte( i[1] );
+						if (i.length > 1) id = Byte.parseByte( i[1] );
 
-					if (result.getData().getData() == id) {
-						plugin.getServer().recipeIterator().remove();
-						if (debug) plugin.getLogger().info( "Removed vanilla recipe for " + mat.name() );
+						if (result.getData().getData() == id) {
+							ri.remove();
+							if (debug) plugin.getLogger().info( "Removed vanilla recipe for " + mat.name() );
 
-						break;
+							break;
+						}
 					}
 				}
 			}
