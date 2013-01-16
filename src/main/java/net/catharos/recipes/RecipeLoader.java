@@ -128,6 +128,9 @@ public class RecipeLoader {
 		if (config.isList( "details" )) {
 			List<String> details = config.getStringList( "details" );
 
+			for (String lore : details)
+				details.set( details.indexOf( lore ), TextUtil.parseColors( lore ) );
+
 			ItemMeta meta = cr.getItem().getItemMeta();
 			meta.setLore( details );
 			cr.getItem().setItemMeta( meta );
