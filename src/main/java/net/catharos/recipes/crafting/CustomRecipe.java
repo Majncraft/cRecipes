@@ -3,6 +3,8 @@ package net.catharos.recipes.crafting;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.catharos.recipes.util.TextUtil;
+
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -75,7 +77,7 @@ public abstract class CustomRecipe {
 	 */
 	protected void setName( String name ) {
 		ItemMeta meta = getItem().getItemMeta();
-		meta.setDisplayName( ChatColor.RESET + name );
+		meta.setDisplayName( ChatColor.RESET + TextUtil.parseColors( name ) );
 		getItem().setItemMeta( meta );
 	}
 }
