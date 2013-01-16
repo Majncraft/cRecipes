@@ -5,14 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.catharos.recipes.crafting.CustomRecipe;
+import net.catharos.recipes.util.TextUtil;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.spaceemotion.updater.Updater;
@@ -94,6 +99,28 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 			block.setType( Material.AIR );
 			event.setCancelled( true );
+		}
+	}
+
+	@EventHandler
+	public void c( CraftItemEvent event ) {
+		Recipe recipe = event.getRecipe();
+		ItemStack result = recipe.getResult();
+
+		CustomRecipe cr = getRecipe( result.getTypeId(), result.getData().getData() );
+
+		if (cr != null) {
+			String perm = cr.getPermission();
+			HumanEntity entity = event.getWhoClicked();
+
+			if (!perm.isEmpty() && !entity.isOp() && !entity.hasPermission( perm )) {
+				event.setCancelled( true );
+
+				String msg = cr.getNoPermissionMessage();
+				if (msg.isEmpty()) msg = getConfig().getString( "permissions.message" );
+
+				if (msg != null && !msg.isEmpty() && entity instanceof Player) ((Player) entity).sendMessage( TextUtil.parseColors( msg ) );
+			}
 		}
 	}
 }

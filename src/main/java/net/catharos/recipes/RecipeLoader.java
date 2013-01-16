@@ -7,6 +7,7 @@ import java.util.List;
 import net.catharos.recipes.crafting.CustomRecipe;
 import net.catharos.recipes.crafting.CustomShapedRecipe;
 import net.catharos.recipes.crafting.CustomShapelessRecipe;
+import net.catharos.recipes.util.TextUtil;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -27,12 +28,16 @@ public class RecipeLoader {
 		if (!recFile.exists()) return;
 
 		FileConfiguration recipes = YamlConfiguration.loadConfiguration( recFile );
+		boolean debug = plugin.getConfig().getBoolean( "debug-output", true );
 
 		// Shaped recipes
 		ConfigurationSection shaped = recipes.getConfigurationSection( "shaped" );
 		if (shaped != null) for (String key : shaped.getKeys( false ))
 			if (shaped.isConfigurationSection( key )) {
-				if (this.loadRecipe( key, shaped.getConfigurationSection( key ), true ))
+				boolean success = this.loadRecipe( key, shaped.getConfigurationSection( key ), true );
+				if (!debug) continue;
+
+				if (success)
 					plugin.getLogger().info( "Successfully added shaped recipe: " + key );
 				else
 					plugin.getLogger().info( "Error adding shaped recipe: " + key );
@@ -43,7 +48,10 @@ public class RecipeLoader {
 
 		if (shapeless != null) for (String key : shapeless.getKeys( false ))
 			if (shapeless.isConfigurationSection( key )) {
-				if (this.loadRecipe( key, shapeless.getConfigurationSection( key ), false ))
+				boolean success = this.loadRecipe( key, shapeless.getConfigurationSection( key ), false );
+				if (!debug) continue;
+
+				if (success)
 					plugin.getLogger().info( "Successfully added shapeless recipe: " + key );
 				else
 					plugin.getLogger().info( "Error adding shapeless recipe: " + key );
@@ -79,6 +87,10 @@ public class RecipeLoader {
 			plugin.getLogger().info( "Error loading recipe: " + e.getMessage() );
 			return false;
 		}
+
+		// Craft permissions
+		if (config.isString( "permission" )) cr.setPermission( config.getString( "permission" ) );
+		if (config.isString( "messages.no-permission" )) cr.setNoPermissionMessage( config.getString( "messages.no-permission" ) );
 
 		// Item drops
 		List<ItemStack> drops = new ArrayList<ItemStack>();

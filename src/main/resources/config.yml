@@ -1,1 +1,4 @@
 check-updates: true
+debug-output: true
+permissions:
+  message: '&3You are not allowed to craft this item!'

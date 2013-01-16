@@ -12,6 +12,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public abstract class CustomRecipe {
 	protected String name;
+	protected String permission;
+	protected String noPermMsg;
+
 	protected final ItemStack item;
 
 	protected List<ItemStack> drops;
@@ -19,6 +22,9 @@ public abstract class CustomRecipe {
 	public CustomRecipe( String name, ItemStack item ) {
 		this.name = name;
 		this.item = item;
+
+		this.permission = "";
+		this.noPermMsg = "";
 
 		this.drops = new ArrayList<ItemStack>();
 	}
@@ -41,6 +47,46 @@ public abstract class CustomRecipe {
 	 */
 	public ItemStack getItem() {
 		return item;
+	}
+
+	/**
+	 * Returns the permission string needed to craft this item. If no permission
+	 * was set an empty string is being returned.
+	 * 
+	 * @return The Permission String
+	 */
+	public String getPermission() {
+		return permission;
+	}
+
+	/**
+	 * Sets the permission string needed to craft this item. If no permission is
+	 * needed, the string can be empty.
+	 * 
+	 * @param permission The permission string to set
+	 */
+	public void setPermission( String permission ) {
+		this.permission = permission;
+	}
+
+	/**
+	 * Returns the message showed when the player lacks the permission to craft
+	 * the item
+	 * 
+	 * @return The message to show
+	 */
+	public String getNoPermissionMessage() {
+		return noPermMsg;
+	}
+
+	/**
+	 * Sets the message showed when the player lacks the permission to craft the
+	 * item
+	 * 
+	 * @param msg The message to show
+	 */
+	public void setNoPermissionMessage( String msg ) {
+		this.noPermMsg = msg;
 	}
 
 	/**
