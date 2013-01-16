@@ -5,7 +5,7 @@
 	<artifactId>cRecipes</artifactId>
 	<packaging>jar</packaging>
 
-	<version>1.0</version>
+	<version>1.0.3</version>
 	<name>cRecipes</name>
 	<url>http://www.catharos.de</url>
 
