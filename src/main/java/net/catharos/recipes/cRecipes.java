@@ -92,7 +92,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void e( BlockBreakEvent event ) {
-		if (event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+		if (event.isCancelled() || event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
 		Block block = event.getBlock();
 		CustomRecipe cr = this.getRecipe( block.getTypeId(), block.getData() );
@@ -108,6 +108,8 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void c( CraftItemEvent event ) {
+		if (event.isCancelled()) return;
+
 		Recipe recipe = event.getRecipe();
 		ItemStack result = recipe.getResult();
 
