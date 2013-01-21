@@ -108,7 +108,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void c( CraftItemEvent event ) {
-		if (event.isCancelled()) return;
+		if (event.isCancelled() || event.isShiftClick()) event.setCancelled( true );
 
 		Recipe recipe = event.getRecipe();
 		ItemStack result = recipe.getResult();
