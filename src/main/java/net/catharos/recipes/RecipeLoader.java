@@ -165,12 +165,13 @@ public class RecipeLoader {
 		// Item lores
 		if (config.isList( "details" )) {
 			List<String> details = config.getStringList( "details" );
+			List<String> parsed = new ArrayList<String>();
 
 			for (String lore : details)
-				details.set( details.indexOf( lore ), TextUtil.parseColors( lore ) );
+				parsed.add( TextUtil.parseColors( lore ) );
 
 			ItemMeta meta = cr.getItem().getItemMeta();
-			meta.setLore( details );
+			meta.setLore( parsed );
 			cr.getItem().setItemMeta( meta );
 		}
 
