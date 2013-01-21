@@ -116,6 +116,8 @@ public class cRecipes extends JavaPlugin implements Listener {
 		CustomRecipe cr = getRecipe( result.getTypeId(), result.getData().getData() );
 
 		if (cr != null) {
+			event.setCurrentItem( cr.getItem() );
+
 			String perm = cr.getPermission();
 			HumanEntity entity = event.getWhoClicked();
 

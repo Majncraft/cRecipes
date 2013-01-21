@@ -18,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class RecipeLoader {
 	protected cRecipes plugin;
@@ -170,9 +169,7 @@ public class RecipeLoader {
 			for (String lore : details)
 				parsed.add( TextUtil.parseColors( lore ) );
 
-			ItemMeta meta = cr.getItem().getItemMeta();
-			meta.setLore( parsed );
-			cr.getItem().setItemMeta( meta );
+			cr.setDetails( parsed );
 		}
 
 		return true;

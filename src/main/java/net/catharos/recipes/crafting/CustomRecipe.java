@@ -18,6 +18,7 @@ public abstract class CustomRecipe {
 	protected final ItemStack item;
 
 	protected List<ItemStack> drops;
+	protected List<String> details;
 
 	public CustomRecipe( String name, ItemStack item ) {
 		this.name = name;
@@ -105,6 +106,17 @@ public abstract class CustomRecipe {
 	 */
 	public void setDrops( List<ItemStack> drops ) {
 		this.drops = drops;
+	}
+
+	/**
+	 * Sets the item details for the result of this recipe
+	 * 
+	 * @param details A {@link List} of item details
+	 */
+	public void setDetails( List<String> details ) {
+		ItemMeta meta = getItem().getItemMeta();
+		meta.setLore( details );
+		getItem().setItemMeta( meta );
 	}
 
 	/**
