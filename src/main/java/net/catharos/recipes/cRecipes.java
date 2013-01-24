@@ -23,6 +23,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.spaceemotion.updater.Updater;
 
 public class cRecipes extends JavaPlugin implements Listener {
+	public static boolean debug = false;
+
 	private cRecipes instance;
 
 	protected Map<Integer, Map<Byte, CustomRecipe>> recipes;
@@ -33,6 +35,8 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 		getConfig().options().copyDefaults( true );
 		this.saveConfig();
+
+		debug = getConfig().getBoolean( "debug-output", true );
 
 		if (getConfig().getBoolean( "check-updates", true )) new Updater( this, true );
 
@@ -69,7 +73,8 @@ public class cRecipes extends JavaPlugin implements Listener {
 		return recipes;
 	}
 
-	public void addRecipe( int mat, byte data, CustomRecipe recipe ) {
+	public void addRecipe( CustomRecipe recipe ) {
+		int mat = recipe.getItem().getTypeId();
 		Map<Byte, CustomRecipe> map = getRecipes().get( mat );
 
 		if (map == null) {
@@ -77,7 +82,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 			recipes.put( mat, map );
 		}
 
-		map.put( data, recipe );
+		map.put( recipe.getItem().getData().getData(), recipe );
 		getServer().addRecipe( recipe.getRecipe() );
 	}
 
