@@ -122,23 +122,41 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 		if (cr != null) {
 			event.setCurrentItem( cr.getItem() );
+			
+			if(event.isShiftClick()) event.setCancelled( true );
 
 			String perm = cr.getPermission();
 			HumanEntity entity = event.getWhoClicked();
-
+			
+			if(!(entity instanceof Player)) return;
+			Player player = (Player) entity;
+			
 			if (!perm.isEmpty() && !entity.isOp() && !entity.hasPermission( perm )) {
 				event.setCancelled( true );
 
 				String msg = cr.getNoPermissionMessage();
 				if (msg.isEmpty()) msg = getConfig().getString( "permissions.message" );
 
-				if (msg != null && !msg.isEmpty() && entity instanceof Player) ((Player) entity).sendMessage( TextUtil.parseColors( msg ) );
+				if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseColors( msg ) );
 			}
 			
-			if(event.isShiftClick()) event.setCancelled( true );
+			if(cr.getXPNeeded() > 0) {
+				float xp = cr.getXPNeeded();
+				
+				if(player.getExp() < xp) {
+					event.setCancelled( true );
+					
+					// TODO msg
+				} else {
+					player.setExp( player.getExp() - xp );
+				}
+			}
 			
-			if(!cr.getSuccessMessage().isEmpty() && entity instanceof Player) {
-				((Player) entity).sendMessage( TextUtil.parseColors( cr.getSuccessMessage() ) );
+			if(cr.getXPGiven() > 0)
+				player.setExp( player.getExp() + cr.getXPGiven() );
+			
+			if(!cr.getSuccessMessage().isEmpty()) {
+				player.sendMessage( TextUtil.parseColors( cr.getSuccessMessage() ) );
 			}
 		}
 	}

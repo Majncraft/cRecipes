@@ -164,6 +164,10 @@ public class RecipeLoader {
 		// Success message
 		if (config.isString( "messages.success" )) cr.setSuccessMessage( config.getString( "messages.success" ) );
 		
+		// XP
+		if (config.isInt( "xp.given" )) cr.setXPGiven( config.getInt( "xp.given" ) );
+		if (config.isInt( "xp.needed" )) cr.setXPNeeded( config.getInt( "xp.needed" ) );
+		
 		// Item drops
 		List<ItemStack> drops = new ArrayList<ItemStack>();
 
