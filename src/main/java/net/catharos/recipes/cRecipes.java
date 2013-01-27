@@ -113,7 +113,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void c( CraftItemEvent event ) {
-		if (event.isCancelled() || event.isShiftClick()) event.setCancelled( true );
+		if (event.isCancelled()) event.setCancelled( true );
 
 		Recipe recipe = event.getRecipe();
 		ItemStack result = recipe.getResult();
@@ -134,6 +134,8 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 				if (msg != null && !msg.isEmpty() && entity instanceof Player) ((Player) entity).sendMessage( TextUtil.parseColors( msg ) );
 			}
+			
+			if(event.isShiftClick()) event.setCancelled( true );
 		}
 	}
 }
