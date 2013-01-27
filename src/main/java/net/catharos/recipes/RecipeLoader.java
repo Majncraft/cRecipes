@@ -161,6 +161,9 @@ public class RecipeLoader {
 		if (config.isString( "permission" )) cr.setPermission( config.getString( "permission" ) );
 		if (config.isString( "messages.no-permission" )) cr.setNoPermissionMessage( config.getString( "messages.no-permission" ) );
 
+		// Success message
+		if (config.isString( "messages.success" )) cr.setSuccessMessage( config.getString( "messages.success" ) );
+		
 		// Item drops
 		List<ItemStack> drops = new ArrayList<ItemStack>();
 

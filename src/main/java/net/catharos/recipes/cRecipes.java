@@ -136,6 +136,10 @@ public class cRecipes extends JavaPlugin implements Listener {
 			}
 			
 			if(event.isShiftClick()) event.setCancelled( true );
+			
+			if(!cr.getSuccessMessage().isEmpty() && entity instanceof Player) {
+				((Player) entity).sendMessage( TextUtil.parseColors( cr.getSuccessMessage() ) );
+			}
 		}
 	}
 }

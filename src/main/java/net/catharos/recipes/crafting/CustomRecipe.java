@@ -14,6 +14,7 @@ public abstract class CustomRecipe {
 	protected String name;
 	protected String permission;
 	protected String noPermMsg;
+	protected String successMsg;
 
 	protected final ItemStack item;
 
@@ -26,6 +27,7 @@ public abstract class CustomRecipe {
 
 		this.permission = "";
 		this.noPermMsg = "";
+		this.successMsg = "";
 
 		this.drops = new ArrayList<ItemStack>();
 	}
@@ -88,6 +90,26 @@ public abstract class CustomRecipe {
 	 */
 	public void setNoPermissionMessage( String msg ) {
 		this.noPermMsg = msg;
+	}
+	
+	/**
+	 * Returns the success message shown when a player successfully crafted a
+	 * custom item or block
+	 * 
+	 * @return The success message
+	 */
+	public String getSuccessMessage() {
+		return successMsg;
+	}
+	
+	/**
+	 * Sets the success message shown when a player successfully crafted a
+	 * custom item or block
+	 * 
+	 * @param msg The success message
+	 */
+	public void setSuccessMessage( String msg ) {
+		this.successMsg = msg;
 	}
 
 	/**
