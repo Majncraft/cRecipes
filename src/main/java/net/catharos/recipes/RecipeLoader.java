@@ -167,6 +167,12 @@ public class RecipeLoader {
 		// XP
 		if (config.isInt( "xp.given" )) cr.setXPGiven( config.getInt( "xp.given" ) );
 		if (config.isInt( "xp.needed" )) cr.setXPNeeded( config.getInt( "xp.needed" ) );
+		if (config.isBoolean( "xp.subtract" )) cr.subtractXp( config.getBoolean( "xp.subtract" ) );
+		
+		// Levels
+		if (config.isInt( "lvl.given" )) cr.setLvlGiven( config.getInt( "lvl.given" ) );
+		if (config.isInt( "lvl.needed" )) cr.setLvlNeeded( config.getInt( "lvl.needed" ) );
+		if (config.isBoolean( "lvl.subtract" )) cr.subtractLvl( config.getBoolean( "lvl.subtract" ) );
 		
 		// Item drops
 		List<ItemStack> drops = new ArrayList<ItemStack>();

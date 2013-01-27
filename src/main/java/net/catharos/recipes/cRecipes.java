@@ -140,6 +140,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 				if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseColors( msg ) );
 			}
 			
+			// Experience
 			if(cr.getXPNeeded() > 0) {
 				float xp = cr.getXPNeeded();
 				
@@ -147,13 +148,32 @@ public class cRecipes extends JavaPlugin implements Listener {
 					event.setCancelled( true );
 					
 					// TODO msg
-				} else {
+				} else if(cr.subtractXp()) {
 					player.setExp( player.getExp() - xp );
 				}
 			}
 			
 			if(cr.getXPGiven() > 0)
 				player.setExp( player.getExp() + cr.getXPGiven() );
+			
+			
+			// Levels
+			if(cr.getLvlNeeded() > 0) {
+				int lvl = cr.getLvlNeeded();
+				
+				if(player.getLevel() < lvl) {
+					event.setCancelled( true );
+					
+					// TODO msg
+				} else if(cr.subtractLvl()) {
+					player.setLevel( player.getLevel() - lvl );
+				}
+			}
+			
+			if(cr.getLvlGiven() > 0) {
+				player.setLevel( player.getLevel() + cr.getLvlGiven() );
+			}
+			
 			
 			if(!cr.getSuccessMessage().isEmpty()) {
 				player.sendMessage( TextUtil.parseColors( cr.getSuccessMessage() ) );

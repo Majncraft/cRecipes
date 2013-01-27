@@ -21,6 +21,9 @@ public abstract class CustomRecipe {
 	
 	protected int lvlNeeded;
 	protected int lvlGiven;
+	
+	protected boolean remXp = false;
+	protected boolean remLvl = false;
 
 	protected final ItemStack item;
 
@@ -128,9 +131,25 @@ public abstract class CustomRecipe {
 	
 	public void setXPNeeded( float xp ) { this.xpNeeded = xp; }
 	
+	public boolean subtractXp() { return this.remXp; }
+	
+	public void subtractXp( boolean sub ) { this.remXp = sub; }
+	
 	public float getXPGiven() { return this.xpGiven; }
 	
 	public void setXPGiven( float xp ) { this.xpGiven = xp; }
+	
+	public int getLvlNeeded() { return this.lvlNeeded; }
+	
+	public void setLvlNeeded( int lvl ) { this.lvlNeeded = lvl; }
+	
+	public boolean subtractLvl() { return this.remLvl; }
+	
+	public void subtractLvl( boolean sub ) { this.remLvl = sub; }
+	
+	public int getLvlGiven() { return this.lvlGiven; }
+	
+	public void setLvlGiven( int lvl ) { this.lvlGiven = lvl; }
 	
 	/**
 	 * Returns a list of item drops of this block
