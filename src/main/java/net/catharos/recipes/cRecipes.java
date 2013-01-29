@@ -17,7 +17,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.spaceemotion.updater.Updater;
@@ -115,22 +114,22 @@ public class cRecipes extends JavaPlugin implements Listener {
 	public void c( CraftItemEvent event ) {
 		if (event.isCancelled()) event.setCancelled( true );
 
-		Recipe recipe = event.getRecipe();
-		ItemStack result = recipe.getResult();
+		ItemStack result = event.getInventory().getResult();
+		if (result == null) return;
 
 		CustomRecipe cr = getRecipe( result.getTypeId(), result.getData().getData() );
 
 		if (cr != null) {
 			event.setCurrentItem( cr.getItem() );
-			
-			if(event.isShiftClick()) event.setCancelled( true );
+
+			if (event.isShiftClick()) event.setCancelled( true );
 
 			String perm = cr.getPermission();
 			HumanEntity entity = event.getWhoClicked();
-			
-			if(!(entity instanceof Player)) return;
+
+			if (!(entity instanceof Player)) return;
 			Player player = (Player) entity;
-			
+
 			if (!perm.isEmpty() && !entity.isOp() && !entity.hasPermission( perm )) {
 				event.setCancelled( true );
 
@@ -139,43 +138,40 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 				if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseColors( msg ) );
 			}
-			
+
 			// Experience
-			if(cr.getXPNeeded() > 0) {
+			if (cr.getXPNeeded() > 0) {
 				float xp = cr.getXPNeeded();
-				
-				if(player.getExp() < xp) {
+
+				if (player.getExp() < xp) {
 					event.setCancelled( true );
-					
+
 					// TODO msg
-				} else if(cr.subtractXp()) {
+				} else if (cr.subtractXp()) {
 					player.setExp( player.getExp() - xp );
 				}
 			}
-			
-			if(cr.getXPGiven() > 0)
-				player.setExp( player.getExp() + cr.getXPGiven() );
-			
-			
+
+			if (cr.getXPGiven() > 0) player.setExp( player.getExp() + cr.getXPGiven() );
+
 			// Levels
-			if(cr.getLvlNeeded() > 0) {
+			if (cr.getLvlNeeded() > 0) {
 				int lvl = cr.getLvlNeeded();
-				
-				if(player.getLevel() < lvl) {
+
+				if (player.getLevel() < lvl) {
 					event.setCancelled( true );
-					
+
 					// TODO msg
-				} else if(cr.subtractLvl()) {
+				} else if (cr.subtractLvl()) {
 					player.setLevel( player.getLevel() - lvl );
 				}
 			}
-			
-			if(cr.getLvlGiven() > 0) {
+
+			if (cr.getLvlGiven() > 0) {
 				player.setLevel( player.getLevel() + cr.getLvlGiven() );
 			}
-			
-			
-			if(!cr.getSuccessMessage().isEmpty()) {
+
+			if (!cr.getSuccessMessage().isEmpty()) {
 				player.sendMessage( TextUtil.parseColors( cr.getSuccessMessage() ) );
 			}
 		}
