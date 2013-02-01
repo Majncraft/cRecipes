@@ -1,6 +1,7 @@
 package net.catharos.recipes;
 
 import net.catharos.recipes.crafting.CustomRecipe;
+import net.catharos.recipes.util.InventoryUtil;
 import net.catharos.recipes.util.TextUtil;
 
 import org.bukkit.Bukkit;
@@ -78,6 +79,10 @@ public class CraftListener implements Listener {
 
 			if (cr.getLvlGiven() > 0) {
 				player.setLevel( player.getLevel() + cr.getLvlGiven() );
+			}
+
+			if (!cr.getExtraDrops().isEmpty()) {
+				InventoryUtil.givePlayer( player, cr.getExtraDrops() );
 			}
 
 			if (!cr.getSuccessMessage().isEmpty()) {

@@ -194,6 +194,29 @@ public class RecipeLoader {
 
 		cr.setDrops( drops );
 
+		// Item extra drops
+		if (config.isList( "extras" )) {
+			List<ItemStack> extras = new ArrayList<ItemStack>();
+
+			for (String s : config.getStringList( "extras" )) {
+				String[] i = s.split( ":" );
+
+				if (i.length < 1) {
+					plugin.getLogger().info( "Error loading recipe: " + ("Wrong format: " + s + " (should be like a:b[:c])") );
+					continue;
+				}
+
+				MaterialEntry mat;
+
+				mat = (i.length > 2) ? getMaterial( i[1] + ":" + i[2] ) : getMaterial( i[1] );
+				if (mat == null) continue;
+
+				extras.add( new ItemStack( mat.material, Integer.parseInt( i[0] ), mat.data ) );
+			}
+
+			cr.setExtraDrops( extras );
+		}
+
 		// Item lores
 		if (config.isList( "details" )) {
 			List<String> details = config.getStringList( "details" );

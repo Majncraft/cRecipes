@@ -15,19 +15,20 @@ public abstract class CustomRecipe {
 	protected String permission;
 	protected String noPermMsg;
 	protected String successMsg;
-	
+
 	protected float xpNeeded;
 	protected float xpGiven;
-	
+
 	protected int lvlNeeded;
 	protected int lvlGiven;
-	
+
 	protected boolean remXp = false;
 	protected boolean remLvl = false;
 
 	protected final ItemStack item;
 
 	protected List<ItemStack> drops;
+	protected List<ItemStack> extras;
 	protected List<String> details;
 
 	public CustomRecipe( String name, ItemStack item ) {
@@ -37,14 +38,15 @@ public abstract class CustomRecipe {
 		this.permission = "";
 		this.noPermMsg = "";
 		this.successMsg = "";
-		
+
 		this.xpNeeded = 0;
 		this.xpGiven = 0;
-		
+
 		this.lvlNeeded = 0;
 		this.lvlGiven = 0;
 
 		this.drops = new ArrayList<ItemStack>();
+		this.extras = new ArrayList<ItemStack>();
 	}
 
 	/* ---------------- Public methods ---------------- */
@@ -106,7 +108,7 @@ public abstract class CustomRecipe {
 	public void setNoPermissionMessage( String msg ) {
 		this.noPermMsg = msg;
 	}
-	
+
 	/**
 	 * Returns the success message shown when a player successfully crafted a
 	 * custom item or block
@@ -116,7 +118,7 @@ public abstract class CustomRecipe {
 	public String getSuccessMessage() {
 		return successMsg;
 	}
-	
+
 	/**
 	 * Sets the success message shown when a player successfully crafted a
 	 * custom item or block
@@ -127,30 +129,54 @@ public abstract class CustomRecipe {
 		this.successMsg = msg;
 	}
 
-	public float getXPNeeded() { return this.xpNeeded; }
-	
-	public void setXPNeeded( float xp ) { this.xpNeeded = xp; }
-	
-	public boolean subtractXp() { return this.remXp; }
-	
-	public void subtractXp( boolean sub ) { this.remXp = sub; }
-	
-	public float getXPGiven() { return this.xpGiven; }
-	
-	public void setXPGiven( float xp ) { this.xpGiven = xp; }
-	
-	public int getLvlNeeded() { return this.lvlNeeded; }
-	
-	public void setLvlNeeded( int lvl ) { this.lvlNeeded = lvl; }
-	
-	public boolean subtractLvl() { return this.remLvl; }
-	
-	public void subtractLvl( boolean sub ) { this.remLvl = sub; }
-	
-	public int getLvlGiven() { return this.lvlGiven; }
-	
-	public void setLvlGiven( int lvl ) { this.lvlGiven = lvl; }
-	
+	public float getXPNeeded() {
+		return this.xpNeeded;
+	}
+
+	public void setXPNeeded( float xp ) {
+		this.xpNeeded = xp;
+	}
+
+	public boolean subtractXp() {
+		return this.remXp;
+	}
+
+	public void subtractXp( boolean sub ) {
+		this.remXp = sub;
+	}
+
+	public float getXPGiven() {
+		return this.xpGiven;
+	}
+
+	public void setXPGiven( float xp ) {
+		this.xpGiven = xp;
+	}
+
+	public int getLvlNeeded() {
+		return this.lvlNeeded;
+	}
+
+	public void setLvlNeeded( int lvl ) {
+		this.lvlNeeded = lvl;
+	}
+
+	public boolean subtractLvl() {
+		return this.remLvl;
+	}
+
+	public void subtractLvl( boolean sub ) {
+		this.remLvl = sub;
+	}
+
+	public int getLvlGiven() {
+		return this.lvlGiven;
+	}
+
+	public void setLvlGiven( int lvl ) {
+		this.lvlGiven = lvl;
+	}
+
 	/**
 	 * Returns a list of item drops of this block
 	 * 
@@ -167,6 +193,14 @@ public abstract class CustomRecipe {
 	 */
 	public void setDrops( List<ItemStack> drops ) {
 		this.drops = drops;
+	}
+
+	public List<ItemStack> getExtraDrops() {
+		return extras;
+	}
+
+	public void setExtraDrops( List<ItemStack> extras ) {
+		this.extras = extras;
 	}
 
 	/**
