@@ -7,10 +7,10 @@ import org.bukkit.inventory.ShapelessRecipe;
 public class CustomShapelessRecipe extends CustomRecipe {
 	protected ShapelessRecipe recipe;
 
-	public CustomShapelessRecipe( String name, Material mat, int amount, byte id ) {
+	public CustomShapelessRecipe( String name, Material mat, int amount, byte id, boolean setname ) {
 		super( name, new ItemStack( mat, amount, id ) );
 
-		setName( name );
+		if (setname) setName( name );
 		recipe = new ShapelessRecipe( getItem() );
 	}
 
