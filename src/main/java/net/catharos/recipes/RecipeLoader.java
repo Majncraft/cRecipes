@@ -184,13 +184,15 @@ public class RecipeLoader {
 
 				CustomRecipe get = plugin.getRecipe( dropMat.material.getId(), dropMat.data );
 
-				if (get != null)
-					drops.add( get.getItem() );
-				else
+				if (get != null) {
+					drops.add( getSingle( get.getItem() ) );
+				} else {
 					drops.add( new ItemStack( dropMat.material, 1, dropMat.data ) );
+				}
 			}
-		} else
-			drops.add( cr.getItem() );
+		} else {
+			drops.add( getSingle( cr.getItem() ) );
+		}
 
 		cr.setDrops( drops );
 
@@ -313,5 +315,12 @@ public class RecipeLoader {
 		}
 
 		return null;
+	}
+
+	private ItemStack getSingle( ItemStack i ) {
+		ItemStack o = i.clone();
+		o.setAmount( 1 );
+
+		return o;
 	}
 }
