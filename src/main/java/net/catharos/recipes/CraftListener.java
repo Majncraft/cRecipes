@@ -47,6 +47,8 @@ public class CraftListener implements Listener {
 				if (msg.isEmpty()) msg = plugin.getConfig().getString( "permissions.message" );
 
 				if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseColors( msg ) );
+
+				return;
 			}
 
 			// Experience
