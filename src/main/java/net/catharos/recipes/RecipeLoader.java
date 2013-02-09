@@ -177,28 +177,6 @@ public class RecipeLoader {
 		if (config.isInt( "lvl.needed" )) cr.setLvlNeeded( config.getInt( "lvl.needed" ) );
 		if (config.isBoolean( "lvl.subtract" )) cr.subtractLvl( config.getBoolean( "lvl.subtract" ) );
 
-		// Item drops
-		List<ItemStack> drops = new ArrayList<ItemStack>();
-
-		if (config.isList( "drops" )) {
-			for (String s : config.getStringList( "drops" )) {
-				MaterialEntry dropMat = getMaterial( s );
-				if (dropMat == null) continue;
-
-				CustomRecipe get = plugin.getRecipe( dropMat.material.getId(), dropMat.data );
-
-				if (get != null) {
-					drops.add( getSingle( get.getItem() ) );
-				} else {
-					drops.add( new ItemStack( dropMat.material, 1, dropMat.data ) );
-				}
-			}
-		} else {
-			drops.add( getSingle( cr.getItem() ) );
-		}
-
-		cr.setDrops( drops );
-
 		// Item extra drops
 		if (config.isList( "extras" )) {
 			List<ItemStack> extras = new ArrayList<ItemStack>();
@@ -232,6 +210,28 @@ public class RecipeLoader {
 
 			cr.setDetails( parsed );
 		}
+
+		// Item drops
+		List<ItemStack> drops = new ArrayList<ItemStack>();
+
+		if (config.isList( "drops" )) {
+			for (String s : config.getStringList( "drops" )) {
+				MaterialEntry dropMat = getMaterial( s );
+				if (dropMat == null) continue;
+
+				CustomRecipe get = plugin.getRecipe( dropMat.material.getId(), dropMat.data );
+
+				if (get != null) {
+					drops.add( getSingle( get.getItem() ) );
+				} else {
+					drops.add( new ItemStack( dropMat.material, 1, dropMat.data ) );
+				}
+			}
+		} else {
+			drops.add( getSingle( cr.getItem() ) );
+		}
+
+		cr.setDrops( drops );
 
 		return true;
 	}
