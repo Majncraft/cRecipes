@@ -10,6 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -96,7 +97,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 			return null;
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void e( BlockBreakEvent event ) {
 		if (event.isCancelled() || event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
@@ -104,9 +105,11 @@ public class cRecipes extends JavaPlugin implements Listener {
 		CustomRecipe cr = this.getRecipe( block.getTypeId(), block.getData() );
 
 		if (cr != null) {
-			for (ItemStack drop : cr.getDrops())
-				block.getWorld().dropItemNaturally( block.getLocation(), drop );
-
+			for (ItemStack drop : cr.getDrops()) {
+				if(drop.getType() != Material.AIR)
+					block.getWorld().dropItemNaturally( block.getLocation(), drop );
+			}
+			
 			block.setType( Material.AIR );
 			event.setCancelled( true );
 		}
