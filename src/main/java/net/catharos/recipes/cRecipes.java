@@ -1,25 +1,17 @@
 package net.catharos.recipes;
 
-import com.spaceemotion.updater.JSONUpdater;
-import net.catharos.recipes.listener.CraftListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.catharos.recipes.crafting.CustomRecipe;
+import net.catharos.recipes.listener.BlockListener;
+import net.catharos.recipes.listener.CraftListener;
 
-<<<<<<< HEAD
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-=======
->>>>>>> Huge source refactor + Improved Updater (was not working at all)
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.catharos.recipes.listener.BlockListener;
+import com.spaceemotion.updater.JSONUpdater;
 
 public class cRecipes extends JavaPlugin implements Listener {
 	public static boolean debug = false;
@@ -119,25 +111,4 @@ public class cRecipes extends JavaPlugin implements Listener {
 			return null;
 	}
 
-<<<<<<< HEAD
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void e( BlockBreakEvent event ) {
-		if (event.isCancelled() || event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
-
-		Block block = event.getBlock();
-		CustomRecipe cr = this.getRecipe( block.getTypeId(), block.getData() );
-
-		if (cr != null) {
-			for (ItemStack drop : cr.getDrops()) {
-				if(drop.getType() != Material.AIR)
-					block.getWorld().dropItemNaturally( block.getLocation(), drop );
-			}
-			
-			block.setType( Material.AIR );
-			event.setCancelled( true );
-		}
-	}
-
-=======
->>>>>>> Huge source refactor + Improved Updater (was not working at all)
 }
