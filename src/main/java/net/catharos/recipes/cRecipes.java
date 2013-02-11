@@ -1,32 +1,39 @@
 package net.catharos.recipes;
 
+import com.spaceemotion.updater.JSONUpdater;
+import net.catharos.recipes.listener.CraftListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.catharos.recipes.crafting.CustomRecipe;
 
+<<<<<<< HEAD
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+=======
+>>>>>>> Huge source refactor + Improved Updater (was not working at all)
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.spaceemotion.updater.Updater;
+import net.catharos.recipes.listener.BlockListener;
 
 public class cRecipes extends JavaPlugin implements Listener {
 	public static boolean debug = false;
+	private static cRecipes instance;
 
-	private cRecipes instance;
-	private CraftListener listener;
+	private JSONUpdater updater;
+
+	private CraftListener craftListener;
+	private BlockListener blockListener;
 
 	protected Map<Integer, Map<Byte, CustomRecipe>> recipes;
 	protected RecipeLoader loader;
 
+	@Override
 	public void onEnable() {
 		instance = this;
 
@@ -35,13 +42,15 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 		debug = getConfig().getBoolean( "debug-output", true );
 
-		if (getConfig().getBoolean( "check-updates", true )) new Updater( this, true );
+		if (getConfig().getBoolean( "check-updates", true )) {
+			this.updater = new JSONUpdater( this );
+		}
 
 		// Run async, to reduce lagg
 		getServer().getScheduler().runTaskAsynchronously( this, new Runnable() {
 			public void run() {
 				try {
-					Metrics metrics = new Metrics( instance );
+					Metrics metrics = new Metrics( getInstance() );
 					metrics.start();
 				} catch (IOException e) {
 					getLogger().info( "cRecipes failed plugin metrics" );
@@ -54,16 +63,29 @@ public class cRecipes extends JavaPlugin implements Listener {
 		recipes = new HashMap<Integer, Map<Byte, CustomRecipe>>();
 		loader = new RecipeLoader( this );
 
-		listener = new CraftListener( this );
-		getServer().getPluginManager().registerEvents( this, this );
+		craftListener = new CraftListener( this );
+		blockListener = new BlockListener( this );
 	}
 
+	@Override
 	public void onDisable() {
 		getServer().resetRecipes();
 	}
 
-	public CraftListener getListener() {
-		return listener;
+	public static cRecipes getInstance() {
+		return instance;
+	}
+
+	public JSONUpdater getUpdater() {
+		return updater;
+	}
+
+	public CraftListener getCraftListener() {
+		return craftListener;
+	}
+
+	public BlockListener getBlockListener() {
+		return blockListener;
 	}
 
 	/**
@@ -97,6 +119,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 			return null;
 	}
 
+<<<<<<< HEAD
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void e( BlockBreakEvent event ) {
 		if (event.isCancelled() || event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
@@ -115,4 +138,6 @@ public class cRecipes extends JavaPlugin implements Listener {
 		}
 	}
 
+=======
+>>>>>>> Huge source refactor + Improved Updater (was not working at all)
 }

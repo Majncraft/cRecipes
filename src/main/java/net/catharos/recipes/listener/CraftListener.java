@@ -1,5 +1,6 @@
-package net.catharos.recipes;
+package net.catharos.recipes.listener;
 
+import net.catharos.recipes.cRecipes;
 import net.catharos.recipes.crafting.CustomRecipe;
 import net.catharos.recipes.util.InventoryUtil;
 import net.catharos.recipes.util.TextUtil;

@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 
 import net.catharos.recipes.crafting.CustomFurnaceRecipe;
 import net.catharos.recipes.crafting.CustomRecipe;
 import net.catharos.recipes.crafting.CustomShapedRecipe;
 import net.catharos.recipes.crafting.CustomShapelessRecipe;
+import net.catharos.recipes.util.MaterialUtil;
 import net.catharos.recipes.util.TextUtil;
 
 import org.bukkit.Material;
@@ -22,10 +22,6 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 
 public class RecipeLoader {
-	protected enum RecipeType {
-		SHAPED, SHAPELESS, FURNACE
-	}
-
 	protected cRecipes plugin;
 
 	public RecipeLoader( cRecipes plugin ) {
@@ -48,7 +44,7 @@ public class RecipeLoader {
 					ItemStack result = recipe.getResult();
 
 					for (String r : removes) {
-						MaterialEntry mat = getMaterial( r );
+						MaterialEntry mat = MaterialUtil.getMaterial( r );
 						if (mat == null) continue;
 
 						if (result.getType().equals( mat.material ) && result.getData().getData() == mat.data) {
@@ -68,7 +64,7 @@ public class RecipeLoader {
 		// Shaped recipes
 		if (recipes.isConfigurationSection( "shaped" )) {
 			ConfigurationSection shaped = recipes.getConfigurationSection( "shaped" );
-			for (String key : shaped.getKeys( false ))
+			for (String key : shaped.getKeys( false )) {
 				if (shaped.isConfigurationSection( key )) {
 					boolean success = this.loadRecipe( key, shaped.getConfigurationSection( key ), RecipeType.SHAPED );
 					if (!cRecipes.debug) continue;
@@ -78,6 +74,7 @@ public class RecipeLoader {
 					else
 						plugin.getLogger().info( "Error adding shaped recipe: " + key );
 				}
+			}
 		}
 
 		// Shapeless recipes
@@ -118,7 +115,7 @@ public class RecipeLoader {
 		String output = config.getString( "output", "" );
 		if (output.isEmpty()) output = config.getString( "block" );
 
-		MaterialEntry mEntry = getMaterial( output );
+		MaterialEntry mEntry = MaterialUtil.getMaterial( output );
 		if (mEntry == null) return false;
 
 		// Crafting amount
@@ -145,7 +142,7 @@ public class RecipeLoader {
 			case FURNACE:
 				String input = config.getString( "input", "" );
 
-				MaterialEntry minEntry = getMaterial( input );
+				MaterialEntry minEntry = MaterialUtil.getMaterial( input );
 				if (minEntry == null) return false;
 
 				cr = new CustomFurnaceRecipe( name, minEntry.material, minEntry.data, mEntry.material, amount, mEntry.data, setname );
@@ -191,7 +188,7 @@ public class RecipeLoader {
 
 				MaterialEntry mat;
 
-				mat = (i.length > 2) ? getMaterial( i[1] + ":" + i[2] ) : getMaterial( i[1] );
+				mat = (i.length > 2) ? MaterialUtil.getMaterial( i[1] + ":" + i[2] ) : MaterialUtil.getMaterial( i[1] );
 				if (mat == null) continue;
 
 				extras.add( new ItemStack( mat.material, Integer.parseInt( i[0] ), mat.data ) );
@@ -216,19 +213,23 @@ public class RecipeLoader {
 
 		if (config.isList( "drops" )) {
 			for (String s : config.getStringList( "drops" )) {
-				MaterialEntry dropMat = getMaterial( s );
+				MaterialEntry dropMat = MaterialUtil.getMaterial( s );
 				if (dropMat == null) continue;
 
 				CustomRecipe get = plugin.getRecipe( dropMat.material.getId(), dropMat.data );
 
+				ItemStack item = null;
+
 				if (get != null) {
-					drops.add( getSingle( get.getItem() ) );
+					item = MaterialUtil.getSingle( get.getItem() );
 				} else {
-					drops.add( new ItemStack( dropMat.material, 1, dropMat.data ) );
+					item = new ItemStack( dropMat.material, 1, dropMat.data );
 				}
+
+				if (item.getType() != Material.AIR) drops.add( item );
 			}
 		} else {
-			drops.add( getSingle( cr.getItem() ) );
+			drops.add( MaterialUtil.getSingle( cr.getItem() ) );
 		}
 
 		cr.setDrops( drops );
@@ -248,7 +249,7 @@ public class RecipeLoader {
 
 			ConfigurationSection ingredients = rc.getConfigurationSection( "ingredients" );
 			for (String key : ingredients.getKeys( false )) {
-				MaterialEntry mat = getMaterial( ingredients.getString( key ) );
+				MaterialEntry mat = MaterialUtil.getMaterial( ingredients.getString( key ) );
 				if (mat == null) continue;
 
 				recipe.setIngredient( key.charAt( 0 ), mat.material, mat.data );
@@ -272,7 +273,7 @@ public class RecipeLoader {
 
 				MaterialEntry mat;
 
-				mat = (i.length > 2) ? getMaterial( i[1] + ":" + i[2] ) : getMaterial( i[1] );
+				mat = (i.length > 2) ? MaterialUtil.getMaterial( i[1] + ":" + i[2] ) : MaterialUtil.getMaterial( i[1] );
 				if (mat == null) continue;
 
 				recipe.addIngredient( Integer.parseInt( i[0] ), mat.material, mat.data );
@@ -285,45 +286,4 @@ public class RecipeLoader {
 		return false;
 	}
 
-	private class MaterialEntry {
-		public Material material;
-		public byte data;
-
-		public MaterialEntry( Material mat, byte data ) {
-			this.material = mat;
-			this.data = data;
-		}
-	}
-
-	private MaterialEntry getMaterial( String str ) {
-		String[] sl = str.split( ":" );
-
-		if (sl.length == 0) return null;
-
-		Material mat = Material.getMaterial( sl[0].toUpperCase() );
-
-		if (mat == null)
-			try {
-				mat = Material.getMaterial( Integer.parseInt( sl[0] ) );
-			} catch (Exception e) {
-				if (cRecipes.debug)
-					plugin.getLogger().log( Level.WARNING, "Invalid Material: '" + sl[0] + "' (Invalid number or invalid material name!)." );
-			}
-
-		if (mat != null) {
-			byte data = 0;
-			if (sl.length > 1) data = Byte.parseByte( sl[1] );
-
-			return new MaterialEntry( mat, data );
-		}
-
-		return null;
-	}
-
-	private ItemStack getSingle( ItemStack i ) {
-		ItemStack o = i.clone();
-		o.setAmount( 1 );
-
-		return o;
-	}
 }

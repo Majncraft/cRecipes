@@ -35,3 +35,4 @@ local.properties
 
 # Mac dust
 *.DS_Store
+/target/

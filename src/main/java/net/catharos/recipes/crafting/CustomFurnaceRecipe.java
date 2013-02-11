@@ -7,11 +7,11 @@ import org.bukkit.inventory.ItemStack;
 public class CustomFurnaceRecipe extends CustomRecipe {
 	protected FurnaceRecipe recipe;
 
-	public CustomFurnaceRecipe( String name, Material in, byte in_id, Material out, int amount, byte id, boolean setname ) {
-		super( name, new ItemStack( out, amount, id ) );
+	public CustomFurnaceRecipe( String name, Material in, short data, Material out, int amount, short data2, boolean setname ) {
+		super( name, new ItemStack( out, amount, data2 ) );
 
 		if (setname) setName( name );
-		recipe = new FurnaceRecipe( getItem(), in, in_id );
+		recipe = new FurnaceRecipe( getItem(), in, data );
 	}
 
 	public FurnaceRecipe getRecipe() {
