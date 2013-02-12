@@ -5,3 +5,8 @@ main: net.catharos.recipes.cRecipes
 
 author: SpaceEmotion
 website: http://www.catharos.de
+
+commands:
+  creload:
+    description: Reloads the cRecipes plugin config and recipes 
+    usage: /<command>

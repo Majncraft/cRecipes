@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.catharos.recipes.cmd.ReloadCommand;
 import net.catharos.recipes.crafting.CustomRecipe;
 import net.catharos.recipes.listener.BlockListener;
 import net.catharos.recipes.listener.CraftListener;
@@ -53,15 +54,22 @@ public class cRecipes extends JavaPlugin implements Listener {
 		getDataFolder().mkdirs();
 
 		recipes = new HashMap<Integer, Map<Byte, CustomRecipe>>();
-		loader = new RecipeLoader( this );
+		reload( true );
 
 		craftListener = new CraftListener( this );
 		blockListener = new BlockListener( this );
+
+		getCommand( "creload" ).setExecutor( new ReloadCommand( this ) );
 	}
 
 	@Override
 	public void onDisable() {
+		reload( false );
+	}
+
+	public void reload( boolean load ) {
 		getServer().resetRecipes();
+		if (load) loader = new RecipeLoader( this );
 	}
 
 	public static cRecipes getInstance() {

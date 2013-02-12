@@ -40,11 +40,11 @@ public class Updater {
 			UpdateMessage msg = reader.read();
 			if (msg.status == Status.ERROR) throw new Exception( msg.message );
 
-			log( (msg.update ? ChatColor.GOLD : ChatColor.AQUA) + msg.message );
+			log( (msg.update ? ChatColor.GOLD : ChatColor.BLUE) + msg.message );
 
 			return;
 		} catch (Exception ex) {
-			log( ChatColor.DARK_RED + "Error trying to update cRecipes: " + ex.getMessage() );
+			log( ChatColor.RED + "Error trying to update cRecipes: " + ex.getMessage() );
 		}
 	}
 
