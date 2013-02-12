@@ -27,14 +27,17 @@ public class UpdateReader {
 			UpdateMessage msg = new UpdateMessage();
 
 			for (String s : str) {
-				Argument arg = new Argument( s );
+				String[] split = s.split( "=" );
+				if (split.length < 2) throw new Exception( "Invalid Argument: " + str );
 
-				if (arg.key.equalsIgnoreCase( "status" )) {
-					msg.status = UpdateMessage.Status.valueOf( arg.value );
-				} else if (arg.key.equalsIgnoreCase( "update" )) {
-					msg.update = Boolean.parseBoolean( arg.value );
-				} else if (arg.key.equalsIgnoreCase( "message" )) {
-					msg.message = arg.value;
+				String key = split[0], value = split[1];
+
+				if (key.equalsIgnoreCase( "status" )) {
+					msg.status = UpdateMessage.Status.valueOf( value );
+				} else if (key.equalsIgnoreCase( "update" )) {
+					msg.update = Boolean.parseBoolean( value );
+				} else if (key.equalsIgnoreCase( "message" )) {
+					msg.message = value;
 				}
 			}
 
@@ -63,18 +66,5 @@ public class UpdateReader {
 		public Status status = Status.ERROR;
 		public boolean update = false;
 		public String message;
-	}
-
-	public class Argument {
-		public String key, value;
-
-		public Argument( String str ) throws Exception {
-			String[] split = str.split( "=" );
-
-			if (split.length < 2) throw new Exception( "Invalid Argument: " + str );
-
-			key = split[0];
-			value = split[1];
-		}
 	}
 }

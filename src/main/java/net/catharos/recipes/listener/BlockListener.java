@@ -34,7 +34,6 @@ public class BlockListener implements Listener {
 			}
 
 			block.setType( Material.AIR );
-			event.setCancelled( true );
 		}
 	}
 

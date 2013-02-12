@@ -36,7 +36,7 @@ public class Updater {
 	public void checkForUpdate() {
 		try {
 			UpdateMessage msg = reader.read();
-			plugin.getLogger().info( ChatColor.BLUE + msg.message );
+			plugin.getLogger().info( (msg.update ? ChatColor.GOLD : ChatColor.BLUE) + msg.message );
 
 			return;
 		} catch (Exception ex) {
