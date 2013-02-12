@@ -28,12 +28,12 @@ public class UpdateReader {
 
 			for (String s : str) {
 				String[] split = s.split( "=" );
-				if (split.length < 2) throw new Exception( "Invalid Argument: " + str );
+				if (split.length < 2) throw new Exception( "Invalid Argument: " + s );
 
 				String key = split[0], value = split[1];
 
 				if (key.equalsIgnoreCase( "status" )) {
-					msg.status = UpdateMessage.Status.valueOf( value );
+					msg.status = UpdateMessage.Status.valueOf( value.toUpperCase() );
 				} else if (key.equalsIgnoreCase( "update" )) {
 					msg.update = Boolean.parseBoolean( value );
 				} else if (key.equalsIgnoreCase( "message" )) {
