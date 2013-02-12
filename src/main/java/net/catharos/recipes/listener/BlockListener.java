@@ -21,7 +21,7 @@ public class BlockListener implements Listener {
 		Bukkit.getServer().getPluginManager().registerEvents( this, plugin );
 	}
 
-	@EventHandler( priority = EventPriority.LOWEST )
+	@EventHandler( priority = EventPriority.HIGHEST )
 	public void e( BlockBreakEvent event ) {
 		if (event.isCancelled() || event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 

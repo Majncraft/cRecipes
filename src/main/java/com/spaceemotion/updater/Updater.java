@@ -1,5 +1,7 @@
 package com.spaceemotion.updater;
 
+import java.util.logging.Level;
+
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,7 +42,7 @@ public class Updater {
 
 			return;
 		} catch (Exception ex) {
-			plugin.getLogger().info( ChatColor.BLUE + "No update found!" );
+			plugin.getLogger().log( Level.WARNING, ChatColor.BLUE + "Error trying to update cRecipes: " + ex.getMessage() );
 		}
 	}
 
