@@ -11,13 +11,13 @@ import net.catharos.recipes.listener.CraftListener;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.spaceemotion.updater.JSONUpdater;
+import com.spaceemotion.updater.Updater;
 
 public class cRecipes extends JavaPlugin implements Listener {
 	public static boolean debug = false;
 	private static cRecipes instance;
 
-	private JSONUpdater updater;
+	private Updater updater;
 
 	private CraftListener craftListener;
 	private BlockListener blockListener;
@@ -35,7 +35,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 		debug = getConfig().getBoolean( "debug-output", true );
 
 		if (getConfig().getBoolean( "check-updates", true )) {
-			this.updater = new JSONUpdater( this );
+			this.updater = new Updater( this );
 		}
 
 		// Run async, to reduce lagg
@@ -68,7 +68,7 @@ public class cRecipes extends JavaPlugin implements Listener {
 		return instance;
 	}
 
-	public JSONUpdater getUpdater() {
+	public Updater getUpdater() {
 		return updater;
 	}
 
