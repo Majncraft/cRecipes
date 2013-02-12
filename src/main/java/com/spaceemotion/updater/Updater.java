@@ -1,13 +1,13 @@
 package com.spaceemotion.updater;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.json.JSONObject;
 
-public class JSONUpdater {
+import com.spaceemotion.updater.UpdateReader.UpdateMessage;
+
+public class Updater {
 	public final static String URL = "http://dev.catharos.de/update.php?project=%P%&version=%V%";
 
 	private JavaPlugin plugin;
@@ -15,7 +15,7 @@ public class JSONUpdater {
 
 	private BukkitTask updateTask;
 
-	public JSONUpdater( JavaPlugin plugin ) {
+	public Updater( JavaPlugin plugin ) {
 		this.plugin = plugin;
 
 		PluginDescriptionFile descr = this.plugin.getDescription();
@@ -35,17 +35,13 @@ public class JSONUpdater {
 
 	public void checkForUpdate() {
 		try {
-			JSONObject obj = reader.read();
+			UpdateMessage msg = reader.read();
+			plugin.getLogger().info( ChatColor.BLUE + msg.message );
 
-			if (obj.getBoolean( "update" )) {
-				String msg = StringEscapeUtils.unescapeJava( obj.getString( "message" ) );
-				plugin.getLogger().info( ChatColor.BLUE + msg );
-				return;
-			}
+			return;
 		} catch (Exception ex) {
+			plugin.getLogger().info( ChatColor.BLUE + "No update found!" );
 		}
-
-		plugin.getLogger().info( ChatColor.BLUE + "No update found!" );
 	}
 
 	private int getVersion( String version ) {

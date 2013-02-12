@@ -8,9 +8,6 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class UpdateReader {
 	private String url;
 
@@ -18,14 +15,30 @@ public class UpdateReader {
 		this.url = url;
 	}
 
-	public JSONObject read() throws IOException, JSONException {
+	public UpdateMessage read() throws IOException, Exception {
 		InputStream is = new URL( url ).openStream();
 
 		try {
 			InputStreamReader ir = new InputStreamReader( is, Charset.forName( "UTF-8" ) );
 			BufferedReader rd = new BufferedReader( ir );
 
-			return new JSONObject( readAll( rd ) );
+			String[] str = readAll( rd ).split( ";" );
+
+			UpdateMessage msg = new UpdateMessage();
+
+			for (String s : str) {
+				Argument arg = new Argument( s );
+
+				if (arg.key.equalsIgnoreCase( "status" )) {
+					msg.status = UpdateMessage.Status.valueOf( arg.value );
+				} else if (arg.key.equalsIgnoreCase( "update" )) {
+					msg.update = Boolean.parseBoolean( arg.value );
+				} else if (arg.key.equalsIgnoreCase( "message" )) {
+					msg.message = arg.value;
+				}
+			}
+
+			return msg;
 		} finally {
 			is.close();
 		}
@@ -40,5 +53,28 @@ public class UpdateReader {
 		}
 
 		return sb.toString();
+	}
+
+	public static class UpdateMessage {
+		public enum Status {
+			SUCCESS, ERROR;
+		}
+
+		public Status status = Status.ERROR;
+		public boolean update = false;
+		public String message;
+	}
+
+	public class Argument {
+		public String key, value;
+
+		public Argument( String str ) throws Exception {
+			String[] split = str.split( "=" );
+
+			if (split.length < 2) throw new Exception( "Invalid Argument: " + str );
+
+			key = split[0];
+			value = split[1];
+		}
 	}
 }

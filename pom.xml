@@ -30,12 +30,6 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20090211</version>
-			<type>jar</type>
-		</dependency>
 	</dependencies>
 
 	<!-- Add resource files -->
