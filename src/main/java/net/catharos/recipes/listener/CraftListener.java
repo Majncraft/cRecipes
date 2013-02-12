@@ -65,7 +65,7 @@ public class CraftListener implements Listener {
 
 					if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseArguments( msg, xp, pxp ) );
 				} else if (cr.subtractXp()) {
-					player.setExp( pxp - xp );
+					player.setTotalExperience( pxp - xp );
 				}
 			}
 
