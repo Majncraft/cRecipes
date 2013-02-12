@@ -51,7 +51,7 @@ public class Updater {
 	private int getVersion( String version ) {
 		try {
 			if (version.contains( "-b" )) {
-				return Integer.parseInt( version.substring( version.indexOf( "-b" ) + 1 ) );
+				return Integer.parseInt( version.substring( version.indexOf( "-b" ) + 2 ) );
 			} else {
 				return Integer.parseInt( version.replaceAll( ".", "" ) );
 			}
@@ -65,6 +65,6 @@ public class Updater {
 	}
 
 	private void log( String msg ) {
-		Bukkit.getConsoleSender().sendMessage( "[cRecipes]" + msg );
+		Bukkit.getConsoleSender().sendMessage( "[cRecipes] " + msg );
 	}
 }
