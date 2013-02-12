@@ -1,6 +1,5 @@
 package com.spaceemotion.updater;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -65,6 +64,6 @@ public class Updater {
 	}
 
 	private void log( String msg ) {
-		Bukkit.getConsoleSender().sendMessage( "[cRecipes] " + msg );
+		plugin.getLogger().info( msg );
 	}
 }

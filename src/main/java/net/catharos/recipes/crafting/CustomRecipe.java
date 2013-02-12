@@ -15,6 +15,8 @@ public abstract class CustomRecipe {
 	protected String permission;
 	protected String noPermMsg;
 	protected String successMsg;
+	protected String notEnoughXpMsg;
+	protected String notEnoughLvlMsg;
 
 	protected float xpNeeded;
 	protected float xpGiven;
@@ -153,6 +155,14 @@ public abstract class CustomRecipe {
 		this.xpGiven = xp;
 	}
 
+	public String getNotEnoughXpMessage() {
+		return this.notEnoughXpMsg;
+	}
+
+	public void setNotEnoughXpMessage( String msg ) {
+		this.notEnoughXpMsg = msg;
+	}
+
 	public int getLvlNeeded() {
 		return this.lvlNeeded;
 	}
@@ -175,6 +185,14 @@ public abstract class CustomRecipe {
 
 	public void setLvlGiven( int lvl ) {
 		this.lvlGiven = lvl;
+	}
+
+	public String getNotEnoughLvlMessage() {
+		return this.notEnoughLvlMsg;
+	}
+
+	public void setNotEnoughLvlMessage( String msg ) {
+		this.notEnoughLvlMsg = msg;
 	}
 
 	/**

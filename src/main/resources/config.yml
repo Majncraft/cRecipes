@@ -1,4 +1,6 @@
 check-updates: true
 debug-output: true
-permissions:
-  message: '&3You are not allowed to craft this item!'
+messages:
+  no-permission: '&3You are not allowed to craft this item!'
+  not-enough-xp: '&3You do not have enough XP to craft this item!'
+  not-enough-lvl: '&3You do not have enough LVLs to craft this item!'

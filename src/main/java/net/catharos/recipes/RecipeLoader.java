@@ -168,11 +168,13 @@ public class RecipeLoader {
 		if (config.isInt( "xp.given" )) cr.setXPGiven( config.getInt( "xp.given" ) );
 		if (config.isInt( "xp.needed" )) cr.setXPNeeded( config.getInt( "xp.needed" ) );
 		if (config.isBoolean( "xp.subtract" )) cr.subtractXp( config.getBoolean( "xp.subtract" ) );
+		if (config.isString( "messages.not-enough-xp" )) cr.setNotEnoughLvlMessage( config.getString( "messages.not-enough-xp" ) );
 
 		// Levels
 		if (config.isInt( "lvl.given" )) cr.setLvlGiven( config.getInt( "lvl.given" ) );
 		if (config.isInt( "lvl.needed" )) cr.setLvlNeeded( config.getInt( "lvl.needed" ) );
 		if (config.isBoolean( "lvl.subtract" )) cr.subtractLvl( config.getBoolean( "lvl.subtract" ) );
+		if (config.isString( "messages.not-enough-lvl" )) cr.setNotEnoughLvlMessage( config.getString( "messages.not-enough-lvl" ) );
 
 		// Item extra drops
 		if (config.isList( "extras" )) {
