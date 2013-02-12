@@ -45,7 +45,7 @@ public class CraftListener implements Listener {
 				event.setCancelled( true );
 
 				String msg = cr.getNoPermissionMessage();
-				if (msg.isEmpty()) msg = plugin.getConfig().getString( "messages.no-permissions" );
+				if (msg == null || msg.isEmpty()) msg = plugin.getConfig().getString( "messages.no-permissions" );
 
 				if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseColors( msg ) );
 
@@ -54,17 +54,18 @@ public class CraftListener implements Listener {
 
 			// Experience
 			if (cr.getXPNeeded() > 0) {
-				float xp = cr.getXPNeeded();
+				int xp = cr.getXPNeeded();
+				int pxp = player.getTotalExperience();
 
-				if (player.getExp() < xp) {
+				if (pxp < xp) {
 					event.setCancelled( true );
 
 					String msg = cr.getNotEnoughXpMessage();
-					if (msg.isEmpty()) msg = plugin.getConfig().getString( "messages.not-enough-xp" );
+					if (msg == null || msg.isEmpty()) msg = plugin.getConfig().getString( "messages.not-enough-xp" );
 
-					if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseColors( msg ) );
+					if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseArguments( msg, xp, pxp ) );
 				} else if (cr.subtractXp()) {
-					player.setExp( player.getExp() - xp );
+					player.setExp( pxp - xp );
 				}
 			}
 
@@ -78,9 +79,9 @@ public class CraftListener implements Listener {
 					event.setCancelled( true );
 
 					String msg = cr.getNotEnoughLvlMessage();
-					if (msg.isEmpty()) msg = plugin.getConfig().getString( "messages.not-enough-lvl" );
+					if (msg == null || msg.isEmpty()) msg = plugin.getConfig().getString( "messages.not-enough-lvl" );
 
-					if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseColors( msg ) );
+					if (msg != null && !msg.isEmpty()) player.sendMessage( TextUtil.parseArguments( msg, lvl, player.getLevel() ) );
 				} else if (cr.subtractLvl()) {
 					player.setLevel( player.getLevel() - lvl );
 				}

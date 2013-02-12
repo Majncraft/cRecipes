@@ -10,4 +10,11 @@ public class TextUtil {
 
 		return COLOR_PATTERN.matcher( msg ).replaceAll( "\u00a7$1" );
 	}
+
+	public static String parseArguments( String msg, Object... args ) {
+		for (int i = 0; i < args.length; i++)
+			msg = msg.replaceAll( "%" + i, args[i].toString() );
+
+		return parseColors( msg );
+	}
 }

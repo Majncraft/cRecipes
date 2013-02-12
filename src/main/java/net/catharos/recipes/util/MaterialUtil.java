@@ -5,8 +5,10 @@
 package net.catharos.recipes.util;
 
 import java.util.logging.Level;
+
 import net.catharos.recipes.MaterialEntry;
 import net.catharos.recipes.cRecipes;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
