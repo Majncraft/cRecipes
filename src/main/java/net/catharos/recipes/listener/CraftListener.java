@@ -30,7 +30,7 @@ public class CraftListener implements Listener {
 
 		CustomRecipe cr = plugin.getRecipe( result.getTypeId(), result.getData().getData() );
 
-		if (cr != null) {
+		if (cr != null && event.getRecipe().equals(cr.getRecipe())) {
 			event.setCurrentItem( cr.getItem() );
 
 			if (event.isShiftClick()) event.setCancelled( true );
