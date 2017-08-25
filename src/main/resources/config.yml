@@ -1,4 +1,3 @@
-check-updates: true
 debug-output: true
 messages:
   no-permission: '&3You are not allowed to craft this item!'

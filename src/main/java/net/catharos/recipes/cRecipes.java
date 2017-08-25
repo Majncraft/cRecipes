@@ -12,13 +12,9 @@ import net.catharos.recipes.listener.CraftListener;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.spaceemotion.updater.Updater;
-
 public class cRecipes extends JavaPlugin implements Listener {
 	public static boolean debug = false;
 	private static cRecipes instance;
-
-	private Updater updater;
 
 	private CraftListener craftListener;
 	private BlockListener blockListener;
@@ -34,22 +30,6 @@ public class cRecipes extends JavaPlugin implements Listener {
 		this.saveConfig();
 
 		debug = getConfig().getBoolean( "debug-output", true );
-
-		if (getConfig().getBoolean( "check-updates", true )) {
-			this.updater = new Updater( this );
-		}
-
-		// Run async, to reduce lagg
-		getServer().getScheduler().runTaskAsynchronously( this, new Runnable() {
-			public void run() {
-				try {
-					Metrics metrics = new Metrics( getInstance() );
-					metrics.start();
-				} catch (IOException e) {
-					getLogger().info( "cRecipes failed plugin metrics" );
-				}
-			}
-		} );
 
 		getDataFolder().mkdirs();
 
@@ -74,10 +54,6 @@ public class cRecipes extends JavaPlugin implements Listener {
 
 	public static cRecipes getInstance() {
 		return instance;
-	}
-
-	public Updater getUpdater() {
-		return updater;
 	}
 
 	public CraftListener getCraftListener() {

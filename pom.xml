@@ -5,7 +5,7 @@
 	<artifactId>cRecipes</artifactId>
 	<packaging>jar</packaging>
 
-	<version>1.0.6</version>
+	<version>1.1.0</version>
 	<name>cRecipes</name>
 	<url>http://www.catharos.de</url>
 
@@ -16,17 +16,17 @@
 	<!-- Add repositories -->
 	<repositories>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
+			<id>cnaude-repo</id>
+			<url>http://cnaude.org/repo/</url>
 		</repository>
 	</repositories>
 	
 	<!-- Add depencies -->
 	<dependencies>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.4.6-R0.2-SNAPSHOT</version>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot</artifactId>
+			<version>1.12.1-R0.1-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
