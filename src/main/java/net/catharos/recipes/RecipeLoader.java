@@ -130,12 +130,12 @@ public class RecipeLoader {
 		try {
 			switch (type) {
 			case SHAPED:
-				cr = new CustomShapedRecipe( name, mEntry.material, amount, mEntry.data, setname );
+				cr = new CustomShapedRecipe( plugin, name, mEntry.material, amount, mEntry.data, setname );
 				if (!addShaped( (CustomShapedRecipe) cr, config )) return false;
 				break;
 
 			case SHAPELESS:
-				cr = new CustomShapelessRecipe( name, mEntry.material, amount, mEntry.data, setname );
+				cr = new CustomShapelessRecipe( plugin, name, mEntry.material, amount, mEntry.data, setname);
 				if (!addShapeless( (CustomShapelessRecipe) cr, config )) return false;
 				break;
 
@@ -145,7 +145,7 @@ public class RecipeLoader {
 				MaterialEntry minEntry = MaterialUtil.getMaterial( input );
 				if (minEntry == null) return false;
 
-				cr = new CustomFurnaceRecipe( name, minEntry.material, minEntry.data, mEntry.material, amount, mEntry.data, setname );
+				cr = new CustomFurnaceRecipe( plugin, name, minEntry.material, minEntry.data, mEntry.material, amount, mEntry.data, setname );
 				plugin.addRecipe( cr );
 				break;
 

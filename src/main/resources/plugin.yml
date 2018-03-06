@@ -3,7 +3,7 @@ description: Improved custom recipes for Bukkit servers
 version: ${pom.version}-b${BUILD_NUMBER}
 main: net.catharos.recipes.cRecipes
 
-author: SpaceEmotion
+author: [SpaceEmotion, dwi]
 website: http://www.catharos.de
 
 commands:

@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 public abstract class CustomRecipe {
 	protected String name;
@@ -32,7 +33,7 @@ public abstract class CustomRecipe {
 	protected List<ItemStack> extras;
 	protected List<String> details;
 
-	public CustomRecipe( String name, ItemStack item ) {
+	public CustomRecipe(Plugin plugin, String name, ItemStack item) {
 		this.name = name;
 		this.item = item;
 
